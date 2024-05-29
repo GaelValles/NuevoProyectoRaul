@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
-import { getdocs, getdoc, createdocs, updatedocs, deletedocs } from "../controllers/task.controller.js";
+import { getdocs, getdoc, createdocs, updatedocs, deletedocs } from "../controllers/docs.controller.js";
 const router = Router()
 
 router.get('/docs', authRequired, getdocs)
