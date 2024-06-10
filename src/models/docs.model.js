@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 const docSchema = new mongoose.Schema({
-    nombre: {
+    titulo: {
         type: String,
         required: true,
     },
@@ -17,18 +17,23 @@ const docSchema = new mongoose.Schema({
         type: String, // URL de la foto almacenada
         required: true
     },
-    observaciones: {
+    descripcion: {
         type: String,
         required: true,
     },
-    avisoAntelacion: {
+    fechaAnticipacion: {
         type: Date,
         required:true
     },
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required:true
+    }
 },
 {
     timestamps:true
 }
 );
-
-export default mongoose.model('docSchema', docSchema);
+const Doc = mongoose.model('Doc', docSchema)
+export default Doc

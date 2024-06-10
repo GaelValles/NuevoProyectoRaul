@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs"
 import {createAccessToken} from '../libs/jwt.js'
 
 export const registrar = async (req,res)=>{
-    const {nombreCompleto, email, telefono, password, status} = req.body
+    const {nombreCompleto, email, telefono, password} = req.body
 
     try {
         //encriptacion de contraseña
@@ -15,7 +15,6 @@ export const registrar = async (req,res)=>{
             email,
             telefono,
             password:passwordHash,
-            status
         });
         const userSaved = await newUser.save()
         const token = await createAccessToken({id:userSaved._id})
@@ -25,7 +24,6 @@ export const registrar = async (req,res)=>{
             nombreCompleto:userSaved.nombreCompleto,
             email:userSaved.email,
             password:userSaved.password,
-            status:userSaved.status
         })
     } catch (error) {
         res.status(500).json({message:error.message})
@@ -47,8 +45,7 @@ export const login = async (req,res)=>{
             id: userFound._id,
             nombreCompleto:userFound.nombreCompleto,
             email:userFound.email,
-            password:userFound.password,
-            status:userFound.status
+            password:userFound.password
         })
     } catch (error) {
         res.status(500).json({message:error.message})
@@ -71,7 +68,7 @@ export const perfil = async(req,res) => {
         nombreCompleto:userFound.nombreCompleto,
         email:userFound.email,
         password:userFound.password,
-        status:userFound.status
+
     })
     res.send('profile')
 }

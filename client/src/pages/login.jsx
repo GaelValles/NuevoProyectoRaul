@@ -1,39 +1,56 @@
-import { required } from 'joi';
-import {useForm} from 'react-hook-form'
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import fondoImg from '../assets/images/camionLogin.jpg'; // Importa la imagen directamente
+
 function LoginPage() {
-    const {register, handleSubmit} = useForm();
+    const { register, handleSubmit } = useForm();
+    const navigate = useNavigate();
 
     const onSubmit = handleSubmit((data) => {
-        console.log(data)
-    })
-    return (
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="text-center text-3xl font-extrabold text-gray-900">Inicia sesión</h2>
-                <div className="mt-8 bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10 hover:shadow-2xl transition duration-300 ease-in-out">
-                    <form className="space-y-6" onSubmit={onSubmit}>
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                                Correo electrónico
-                            </label>
-                            <div className="mt-1">
-                                <input id="email" name="email" type="email" {...register("email", {required:true} )} autoComplete="email" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
-                        </div>
+        console.log(data);
+    });
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                                Contraseña
-                            </label>
-                            <div className="mt-1">
-                                <input id="password" name="password" type="password" {...register("password", {required:true} )} autoComplete="current-password" required className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
-                            </div>
+    const checkFormCompletion = () => {
+        const correo = document.getElementById("correo").value;
+        const password = document.getElementById("password").value;
+        setFormCompleted(correo !== "" && password !== "");
+    };
+
+    return (
+        <div className="flex h-screen">
+            <div className="w-2/5 h-full">
+                <img src={fondoImg} className="object-cover h-full w-full" alt="Fondo" />
+            </div>
+            <div className="w-3/5 flex justify-center items-center">
+                <div className="bg-white rounded-xl border-2 border-gray-300 p-6 shadow-lg hover:shadow-2xl hover:shadow-gray-700 transition duration-200 ease-in-out max-w-md h-80 w-96">
+                    <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Iniciar sesión</h1>
+                    <form onSubmit={onSubmit} onChange={checkFormCompletion} className="mt-4">
+                        <div className="mb-4">
+                            <input
+                                className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="correo"
+                                type="email"
+                                placeholder="Correo electrónico"
+                                {...register('correo', { required: true })}
+                            />
                         </div>
-                        <div>
-                            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none">
-                                Entrar
-                            </button>
+                        <div className="mb-4">
+                            <input
+                                className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                id="password"
+                                type="password"
+                                placeholder="Contraseña"
+                                {...register('password', { required: true })}
+                            />
                         </div>
+                        <button
+                            type="submit"
+                            id="botonIngresar"
+                            className="rounded-full bg-gray-700 hover:bg-gray-900 text-white font-semibold py-2 px-4 w-full mt-4 transition duration-300 ease-in-out"
+                        >
+                            Ingresar
+                        </button>
                     </form>
                 </div>
             </div>
