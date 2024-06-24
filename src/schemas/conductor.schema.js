@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+// Función para validar archivos (puedes personalizarla según tus necesidades)
+const fileValidation = z.object({
+  originalname: z.string(),
+  mimetype: z.string(),
+  size: z.number(),
+  buffer: z.instanceof(Buffer), // Si estás usando buffer para manejar archivos
+});
+
 export const registerSchema = z.object({
   nombre: z.string({
     required_error: "Se requiere el nombre",
@@ -22,31 +30,13 @@ export const registerSchema = z.object({
   numGafete: z.string({
     required_error: "Se requiere el numero de gafete",
   }),
-  solicitud: z.string({
-    required_error: "Se requiere subir la solicitud",
-  }),
-  antidoping: z.string({
-    required_error: "Se requiere subir el antidoping",
-  }),
-  antecedentes: z.string({
-    required_error: "Se requiere subir los antecedentes penales",
-  }),
-  ine: z.string({
-    required_error: "Se requiere subir el INE",
-  }),
-  visa: z.string({
-    required_error: "Se requiere subir la visa",
-  }),
-  fast: z.string({
-    required_error: "Se requiere subir el fast express",
-  }),
-  domicilio: z.string({
-    required_error: "Se requiere subir el comprobante de domicilio",
-  }),
-  psicofisico: z.string({
-    required_error: "Se requiere subir la prueba psicofisica",
-  }),
-  aduana: z.string({
-    required_error: "Se requiere subir la licencia de aduana",
-  }),
+  solicitud: fileValidation,
+  antidoping: fileValidation,
+  antecedentes: fileValidation,
+  ine: fileValidation,
+  visa: fileValidation,
+  fast: fileValidation,
+  domicilio: fileValidation,
+  psicofisico: fileValidation,
+  aduana: fileValidation,
 });

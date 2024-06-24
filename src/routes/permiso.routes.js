@@ -12,7 +12,7 @@ import { docSchema } from "../schemas/docs.schemas.js";
 const router = Router()
 
 router.get("/permisos", authRequired, getPermisos);
-router.post("/permiso", validateSchema(docSchema), fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postPermiso);
+router.post("/permiso", fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postPermiso);
 router.put("/permiso/:id/update", authRequired, updatePermiso);
 router.delete("/permiso/:id/delete", authRequired, deletePermiso);
 
