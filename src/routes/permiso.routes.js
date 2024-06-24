@@ -1,15 +1,19 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
-import { getdocs, getdoc, createdocs, updatedocs, deletedocs } from "../controllers/docs.controller.js";
+import {
+    getPermisos,
+    postPermiso,
+    updatePermiso,
+    deletePermiso,
+  } from "../controllers/permiso.controller.js";
+import fileUpload from "express-fileupload";
 import { validateSchema } from "../middlewares/validator.middleware.js";
 import { docSchema } from "../schemas/docs.schemas.js";
 const router = Router()
 
-router.get('/docs', authRequired, getdocs)
-router.get('/docs/:id', authRequired, getdoc)
-router.post('/registrarDocs', authRequired, validateSchema(docSchema), createdocs)
-router.delete('/docs:id', authRequired, deletedocs)
-router.put('/docs', authRequired, updatedocs)
+router.get("/permisos", authRequired, getPermisos);
+router.post("/permiso", validateSchema(docSchema), fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postPermiso);
+router.put("/permiso/:id/update", authRequired, updatePermiso);
+router.delete("/permiso/:id/delete", authRequired, deletePermiso);
 
-
-export default router
+export default router;

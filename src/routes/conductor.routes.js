@@ -9,7 +9,7 @@ const router = Router()
 
 router.get('/conductores', authRequired, getConductores)
 router.get('/conductor/:id/search', authRequired, getConductor)
-router.post("/conductor",fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), authRequired, validateSchema(registerSchema),postConductores,);
+router.post("/conductor",fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), validateSchema(registerSchema),postConductores,);
 router.delete('/conductor/:id/delete', authRequired, deleteConductores)
 router.put('/conductor/:id/update', authRequired, updateConductor)
 
