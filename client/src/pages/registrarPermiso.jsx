@@ -1,13 +1,17 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../context/auth.context.jsx';
 import { useNavigate } from 'react-router-dom';
+import { registerPermiso } from '../api/auth.permiso.js';
 
 function RegistrarPermisoPage() {
     const { register, handleSubmit } = useForm();
+    const {registrarPermiso}=useAuth();
     const navigate = useNavigate();
 
-    const onSubmit = handleSubmit((value) => {
-        console.log(value);
+    const onSubmit = handleSubmit(async (value) => {
+        const res = await registerPermiso(value)
+        console.log(res)
     });
 
     return (

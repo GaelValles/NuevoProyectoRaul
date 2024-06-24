@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
-import { registerConductor } from '../api/auth.conductor';
  
 function RegistrarConductorPage() {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, formState:{errors} } = useForm();
+    const { registrarConductor, isAuth} = useAuth();
     const navigate = useNavigate();
+
+    useEffect(()=>{
+        if(isAuth) navigate("/inicio")
+    },[isAuth])
 
     const onSubmit = handleSubmit(async (value) => {
         console.log(value);
-        const res = await registerConductor(value)
-        console.log(res)
     });
 
     return (
@@ -28,6 +31,7 @@ function RegistrarConductorPage() {
                                     placeholder="Nombre completo"
                                     {...register('nombre', { required: true })}
                                 />
+                                {errors.nombre && <p className="text-red-500">nombre es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -37,6 +41,7 @@ function RegistrarConductorPage() {
                                     placeholder="Fecha de nacimiento"
                                     {...register('fechaNacimiento', { required: true })}
                                 />
+                                {errors.fechaNacimiento && <p className="text-red-500">La fecha de nacimiento es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -46,6 +51,7 @@ function RegistrarConductorPage() {
                                     placeholder="No. Licencia"
                                     {...register('numLicencia', { required: true, min: 10 })}
                                 />
+                                {errors.numLicencia && <p className="text-red-500">El numero de la licencia es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -55,6 +61,7 @@ function RegistrarConductorPage() {
                                     placeholder="No. Visa"
                                     {...register('numvisa', { required: true, min: 12  })}
                                 />
+                                {errors.numVisa && <p className="text-red-500">El numero de la visa es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -64,6 +71,7 @@ function RegistrarConductorPage() {
                                     placeholder="No. Gafete"
                                     {...register('numGafete', { required: true, min: 9 })}
                                 />
+                                {errors.numGafete && <p className="text-red-500">El numero del gafete es requerida</p>}
                             </div>
                             
                         </div>
@@ -78,6 +86,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('solicitud', { required: true })}
                                 />
+                                {errors.solicitud && <p className="text-red-500">La solicitud de empleo es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="ine">
@@ -89,6 +98,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('ine', { required: true })}
                                 />
+                                {errors.ine && <p className="text-red-500">El INE es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="visa">
@@ -100,6 +110,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('visa', { required: true })}
                                 />
+                                {errors.visa && <p className="text-red-500">La visa es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fast">
@@ -111,6 +122,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('fast', { required: true })}
                                 />
+                                {errors.fast && <p className="text-red-500">El fast express es requerido</p>}
                             </div>
                         </div>
                         <div>
@@ -124,6 +136,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('antidoping', { required: true })}
                                 />
+                                {errors.antidoping && <p className="text-red-500">El antidoping es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="antecedentes">
@@ -135,6 +148,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('antecedentes', { required: true })}
                                 />
+                                {errors.antecedentes && <p className="text-red-500">los antecedentes penales son requeridos</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="domicilio">
@@ -146,6 +160,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('domicilio', { required: true })}
                                 />
+                                {errors.domicilio && <p className="text-red-500">El domicilio es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="psicofisico">
@@ -157,6 +172,7 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('psicofisico', { required: true })}
                                 />
+                                {errors.psicofisico && <p className="text-red-500">La prueba psicofisica es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aduana">
@@ -168,6 +184,8 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('aduana', { required: true })}
                                 />
+                                {errors.aduana && <p className="text-red-500">La licencia de aduana es requerida</p>}
+
                             </div>
                         </div>
                         <div className="col-span-full">
