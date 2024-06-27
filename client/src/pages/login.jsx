@@ -1,21 +1,20 @@
 import React from 'react';
-import { loginRequest } from '../api/auth';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
 import fondoImg from '../assets/images/camionLogin.jpg'; // Importa la imagen directamente
 
 function LoginPage() {
-    const { login, user } = useAuth();
+    const { login } = useAuth();
     const { register, handleSubmit } = useForm();
     const navigate = useNavigate();
 
-    const onSubmit = handleSubmit(async(data) => {
-
-        await login(data);
-    
-        if(login()){
-            navigate("/inicio")
+    const onSubmit = handleSubmit(async (data) => {
+        const success = await login(data);
+        if (success) {
+            navigate("/inicio");
+        } else {
+            alert("Correo o contraseña incorrectos");
         }
     });
 
@@ -34,7 +33,7 @@ function LoginPage() {
                                 id="correo"
                                 type="email"
                                 placeholder="Correo electrónico"
-                                {...register('correo', { required: true })}
+                                {...register('email', { required: true })}
                             />
                         </div>
                         <div className="mb-4">

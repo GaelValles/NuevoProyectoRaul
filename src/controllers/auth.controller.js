@@ -43,27 +43,26 @@ export const registrar = async (req, res) => {
   };
 
 
-export const login = async (req,res)=>{
-    const {email, password} = req.body
+  export const login = async (req, res) => {
+    const { email, password } = req.body;
     try {
-        const userFound = await User.findOne({email})
-        if (!userFound) return res.status(400).json({message:"Datos invalidos"});
+        const userFound = await User.findOne({ email });
+        if (!userFound) return res.status(400).json({ message: "Datos invalidos" });
 
-        const isMatch = await bcrypt.compare(password, userFound.password)
-        
-        if (!isMatch) return res.status(400).json({message:"Datos invalidos"})
+        const isMatch = await bcrypt.compare(password, userFound.password);
+        if (!isMatch) return res.status(400).json({ message: "Datos invalidos" });
 
-        const token = await createAccessToken({id:userFound._id})
-        res.cookie('token', token);
+        const token = await createAccessToken({ id: userFound._id });
+        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
         res.json({
             id: userFound._id,
-            perfil:userFound.perfil,
-            nombreCompleto:userFound.nombreCompleto,
-            email:userFound.email,
-            password:userFound.password
-        })
+            perfil: userFound.perfil,
+            nombreCompleto: userFound.nombreCompleto,
+            email: userFound.email,
+            token
+        });
     } catch (error) {
-        res.status(500).json({message:error.message})
+        res.status(500).json({ message: error.message });
     }
 };
 
