@@ -20,7 +20,7 @@ function RegistrarConductorPage() {
         Object.keys(values).forEach(key => formData.append(key, values[key][0] || values[key]));
         try {
             await registrarConductor(formData);
-            navigate('/inicio');
+            
         } catch (error) {
             console.error(error);
         }

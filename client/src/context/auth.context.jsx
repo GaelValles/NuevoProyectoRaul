@@ -48,7 +48,7 @@ export const AuthProvider = ({children}) => {
     const registrarPermiso=async(doc)=>{
         const res = await registerPermiso(doc)
         console.log(res.data)
-        setDoc(res.data)
+        setPermiso(res.data)
         setIsAuth(true)
 
     }
