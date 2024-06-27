@@ -24,18 +24,25 @@ const uploadFile = async (file, uploadFunction) => {
 };
 
 // Obtener todos los conductores
-export const getConductores = async (req, res) => {
+
+export const getConductors = async (req, res) => {
   try {
-    const conductores = await Conductor.find();
-    res.json(conductores);
+      const conductors = await Conductor.find();
+      res.json(conductors);
   } catch (error) {
-    return res.status(500).json({
-      message: "Error al obtener los conductores",
-      error,
-    });
+      res.status(500).json({ message: error.message });
   }
 };
 
+export const deleteConductor = async (req, res) => {
+  try {
+      const { id } = req.params;
+      await Conductor.findByIdAndDelete(id);
+      res.status(204).send();
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+};
 // Obtener un conductor por id
 export const getConductor = async (req, res) => {
   try {

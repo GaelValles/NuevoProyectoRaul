@@ -14,6 +14,6 @@ router.post('/registrar',
       tempFileDir: "./uploads",
     }), registrar)
 router.post('/login', validateSchema(loginSchema), login)
-router.post('/logout', logout)
+router.post('/logout',authRequired, logout)
 router.get('/perfil',authRequired, perfil)
 export default router

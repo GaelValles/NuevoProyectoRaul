@@ -11,7 +11,7 @@ import { validateSchema } from "../middlewares/validator.middleware.js";
 import { docSchema } from "../schemas/docs.schemas.js";
 const router = Router()
 
-router.get("/permisos", authRequired, getPermisos);
+router.get("/permisos", getPermisos);
 router.post("/permiso", fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postPermiso);
 router.put("/permiso/:id/update", authRequired, updatePermiso);
 router.delete("/permiso/:id/delete", authRequired, deletePermiso);

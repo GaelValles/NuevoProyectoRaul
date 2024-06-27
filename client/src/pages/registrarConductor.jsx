@@ -2,8 +2,7 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth.context';
-import { registerConductor } from '../api/auth.conductor';
-
+import Sidepage from '../components/sidebar';
  
 function RegistrarConductorPage() {
 
@@ -27,7 +26,9 @@ function RegistrarConductorPage() {
 });
 
     return (
+        
         <div className="flex justify-center items-center h-screen">
+            <div><Sidepage></Sidepage></div>
             <div className="w-full max-w-4xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Conductor</h1>

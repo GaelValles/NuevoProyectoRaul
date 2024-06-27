@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context.jsx';
+<<<<<<< HEAD
+=======
+import { useNavigate } from 'react-router-dom';
+import { registerPermiso } from '../api/auth.permiso.js';
+import Sidepage from '../components/sidebar.jsx';
+>>>>>>> 41e8507045865e9156a96196e2ae6efbfaa7ae07
 
 function RegistrarPermisoPage() {
     const { register, handleSubmit } = useForm();
@@ -27,6 +33,7 @@ function RegistrarPermisoPage() {
 
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
+            <div><Sidepage></Sidepage></div>
             <div className="w-full max-w-3xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Permiso</h1>
