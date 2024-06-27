@@ -32,7 +32,7 @@ cloudinary.config({
     });
     }
 
-    export async function uplaodAntecedentes(filePath) {
+    export async function uploadAntecedentes(filePath) {
     return await cloudinary.uploader.upload(filePath, {
         folder: "lugaAntecedentes",
     });
@@ -62,5 +62,13 @@ cloudinary.config({
     export async function uploadFoto(filePath) {
         return await cloudinary.uploader.upload(filePath, {
             folder: "LugaFotoPermiso",
+        });
+        }
+
+//Usuarios
+    //Subir foto de perfil
+    export async function uploadPerfil(filePath) {
+        return await cloudinary.uploader.upload(filePath, {
+            folder: "LugaPerfilUsuario",
         });
         }

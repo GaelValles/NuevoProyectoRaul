@@ -34,20 +34,17 @@ export const getPermisos = async (req, res) => {
   export const postPermiso = async (req, res) => {
     try {
       const {
-        nombre,
-        fechaCreacion,
+        titulo,
         fechaFinal,
         descripcion,
         avisoAntelacion,
       } = req.body;
   
       const newPermiso = new Permiso({
-        nombre,
-        fechaCreacion,
+        titulo,
         fechaFinal,
         descripcion,
         avisoAntelacion,
-        user: req.user.id,
       });
 
       if (req.files?.foto) {

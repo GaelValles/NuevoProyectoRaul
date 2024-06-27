@@ -1,15 +1,22 @@
 import React from 'react';
+import { loginRequest } from '../api/auth';
 import { useForm } from 'react-hook-form';
+import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
-import { loginRequest } from '../api/auth.js';
 import fondoImg from '../assets/images/camionLogin.jpg'; // Importa la imagen directamente
 
 function LoginPage() {
+    const { login, user } = useAuth();
     const { register, handleSubmit } = useForm();
     const navigate = useNavigate();
 
-    const onSubmit = handleSubmit((data) => {
-        console.log(data);
+    const onSubmit = handleSubmit(async(data) => {
+
+        await login(data);
+    
+        if(login()){
+            navigate("/inicio")
+        }
     });
 
     return (

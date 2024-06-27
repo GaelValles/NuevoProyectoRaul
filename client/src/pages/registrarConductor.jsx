@@ -1,31 +1,42 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/auth.context';
+import { registerConductor } from '../api/auth.conductor';
+
  
 function RegistrarConductorPage() {
-    const { register, handleSubmit, formState:{errors} } = useForm();
-    const { registrarConductor, isAuth} = useAuth();
+
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { registrarConductor, isAuth } = useAuth();
     const navigate = useNavigate();
+   
+    useEffect(() => {
+        if (isAuth) navigate("/inicio");
+    }, [isAuth, navigate]);
 
-    useEffect(()=>{
-        if(isAuth) navigate("/inicio")
-    },[isAuth])
-
-    const onSubmit = handleSubmit(async (value) => {
-        console.log(value);
-    });
+    const onSubmit = handleSubmit(async (values) => {
+        const formData = new FormData();
+        Object.keys(values).forEach(key => formData.append(key, values[key][0] || values[key]));
+        try {
+            await registrarConductor(formData);
+            navigate('/inicio');
+        } catch (error) {
+            console.error(error);
+        }
+});
 
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="w-full max-w-4xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Conductor</h1>
-                    <form onSubmit={onSubmit} className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <form onSubmit={onSubmit} encType="multipart/form-data" className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <div className="mb-4">
                                 <input
                                     className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="nombre"
                                     id="nombre"
                                     type="text"
                                     placeholder="Nombre completo"
@@ -36,6 +47,7 @@ function RegistrarConductorPage() {
                             <div className="mb-4">
                                 <input
                                     className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="fechaNacimiento"
                                     id="fechaNacimiento"
                                     type="date"
                                     placeholder="Fecha de nacimiento"
@@ -46,6 +58,7 @@ function RegistrarConductorPage() {
                             <div className="mb-4">
                                 <input
                                     className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="numLicencia"
                                     id="numLicencia"
                                     type="text"
                                     placeholder="No. Licencia"
@@ -56,16 +69,18 @@ function RegistrarConductorPage() {
                             <div className="mb-4">
                                 <input
                                     className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="numVisa"
                                     id="numVisa"
                                     type="text"
                                     placeholder="No. Visa"
-                                    {...register('numvisa', { required: true, min: 12  })}
+                                    {...register('numVisa', { required: true, min: 12  })}
                                 />
                                 {errors.numVisa && <p className="text-red-500">El numero de la visa es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <input
                                     className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="numGafete"
                                     id="numGafete"
                                     type="text"
                                     placeholder="No. Gafete"
@@ -82,6 +97,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="solicitud"
                                     id="solicitud"
                                     type="file"
                                     {...register('solicitud', { required: true })}
@@ -94,6 +110,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="ine"
                                     id="ine"
                                     type="file"
                                     {...register('ine', { required: true })}
@@ -106,6 +123,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="visa"
                                     id="visa"
                                     type="file"
                                     {...register('visa', { required: true })}
@@ -118,6 +136,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="fast"
                                     id="fast"
                                     type="file"
                                     {...register('fast', { required: true })}
@@ -132,6 +151,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="antidoping"
                                     id="antidoping"
                                     type="file"
                                     {...register('antidoping', { required: true })}
@@ -144,6 +164,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="antecedentes"
                                     id="antecedentes"
                                     type="file"
                                     {...register('antecedentes', { required: true })}
@@ -156,6 +177,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="domicilio"
                                     id="domicilio"
                                     type="file"
                                     {...register('domicilio', { required: true })}
@@ -168,6 +190,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="psicofisico"
                                     id="psicofisico"
                                     type="file"
                                     {...register('psicofisico', { required: true })}
@@ -180,6 +203,7 @@ function RegistrarConductorPage() {
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    name="aduana"
                                     id="aduana"
                                     type="file"
                                     {...register('aduana', { required: true })}
@@ -205,3 +229,5 @@ function RegistrarConductorPage() {
 }
 
 export default RegistrarConductorPage;
+
+

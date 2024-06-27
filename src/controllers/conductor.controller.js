@@ -5,7 +5,7 @@ import {
   uploadVisa,
   uploadFast,
   uploadAntidoping,
-  uplaodAntecedentes,
+  uploadAntecedentes,
   uploadDomicilio,
   uploadPsicofisico,
   uploadAduana,
@@ -55,16 +55,8 @@ export const getConductor = async (req, res) => {
 // Crear un conductor
 export const postConductores = async (req, res) => {
   try {
-    const { nombre, fechaNacimiento, numLicencia, numVisa, numGafete } =
-      req.body;
-
-    const newConductor = new Conductor({
-      nombre,
-      fechaNacimiento,
-      numLicencia,
-      numVisa,
-      numGafete,
-    });
+    const { nombre, fechaNacimiento, numLicencia, numVisa, numGafete } = req.body;
+    const newConductor = new Conductor({ nombre, fechaNacimiento, numLicencia, numVisa, numGafete });
 
     const fileUploads = {
       solicitud: uploadSolicitud,
@@ -72,7 +64,7 @@ export const postConductores = async (req, res) => {
       visa: uploadVisa,
       fast: uploadFast,
       antidoping: uploadAntidoping,
-      antecedentes: uplaodAntecedentes,
+      antecedentes: uploadAntecedentes,
       domicilio: uploadDomicilio,
       psicofisico: uploadPsicofisico,
       aduana: uploadAduana,
@@ -87,9 +79,7 @@ export const postConductores = async (req, res) => {
     const savedConductor = await newConductor.save();
     res.json(savedConductor);
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return res.status(500).json({ message: error.message });
   }
 };
 

@@ -2,7 +2,7 @@ import { createContext, useContext, useState } from "react";
 import { loginRequest } from "../api/auth.js";
 import { registerConductor } from "../api/auth.conductor.js";
 import { registerPermiso } from "../api/auth.permiso.js";
-
+import Cookies from 'js-cookie';
 export const AuthContext = createContext();
 
 export const useAuth = () => {
@@ -14,7 +14,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({children}) => {
-    const [doc, setDoc] = useState(null)
+    const [permiso, setPermiso] = useState(null)
     const [user, setUser] = useState(null)
     const [conductor, setConductor] = useState(null)
     const [isAuth, setIsAuth] = useState(false);
@@ -22,11 +22,21 @@ export const AuthProvider = ({children}) => {
 
     //Parte de user
     const login=async(user)=>{
-        const res = await loginRequest(user)
-        console.log(res.data)
-        setUser(res.data)
-
+        try {
+            const res = await loginRequest(user);
+            setUser(res.data);
+            setIsAuth(true);
+        } catch (error) {
+                console.error(error);
+        }
     }
+
+    //Hace el logout
+    const logout = () => {
+        Cookies.remove("token");
+        setIsAuth(false);
+        setUser(null);
+    };
     //Parte de conductor
     const registrarConductor=async(conductor)=>{
         const res = await registerConductor(conductor)
@@ -43,7 +53,15 @@ export const AuthProvider = ({children}) => {
 
     }
     return(
-        <AuthContext.Provider value={{login,registrarConductor,registrarPermiso,isAuth, user, conductor, doc}}>
+        <AuthContext.Provider value={{
+            login,
+            logout,
+            registrarConductor,
+            registrarPermiso,
+            isAuth,
+            user,
+            conductor,
+            permiso}}>
             {children}
         </AuthContext.Provider>
     )

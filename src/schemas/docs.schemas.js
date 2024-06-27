@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const docSchema = z.object({
-    nombre:z.string({
+    titulo:z.string({
         required_error: "El nombre es requerido",
     }),
     fechaFinal: z.preprocess((arg) => {

@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         required: true
     },
+    perfil: {
+        public_id: String,
+        secure_url: String,
+    },
 
 })
 const User = mongoose.model('User', userSchema)

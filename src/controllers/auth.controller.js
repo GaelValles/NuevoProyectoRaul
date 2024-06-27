@@ -1,34 +1,48 @@
-import { Router } from "express"
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
+import { TOKEN_SECRET  } from "../config.js";
 import {createAccessToken} from '../libs/jwt.js'
+import fs from 'fs-extra';
+import { uploadPerfil } from "../libs/cloudinary.js";
 
-export const registrar = async (req,res)=>{
-    const {nombreCompleto, email, telefono, password} = req.body
-
+export const registrar = async (req, res) => {
     try {
-        //encriptacion de contraseña
-        const passwordHash = await bcrypt.hash(password, 10)
-        //creacion de objeto para el usuario
-        const newUser = new User({
-            nombreCompleto,
-            email,
-            telefono,
-            password:passwordHash,
-        });
-        const userSaved = await newUser.save()
-        const token = await createAccessToken({id:userSaved._id})
-        res.cookie('token', token);
-        res.json({
-            id: userSaved._id,
-            nombreCompleto:userSaved.nombreCompleto,
-            email:userSaved.email,
-            password:userSaved.password,
-        })
+      const {
+        nombreCompleto,
+        email,
+        telefono,
+        password
+      } = req.body;
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      const newUser = new User({
+        nombreCompleto,
+        email,
+        telefono,
+        password:passwordHash
+      });
+
+      if (req.files?.perfil) {
+        const result = await uploadPerfil(req.files.perfil.tempFilePath)
+        newUser.perfil = {
+          public_id: result.public_id,
+          secure_url: result.secure_url
+        }
+        await fs.unlink(req.files.perfil.tempFilePath)
+      }
+
+      const savedUser = await newUser.save();
+      res.json(savedUser);
     } catch (error) {
-        res.status(500).json({message:error.message})
+      return res.status(500).json({
+        message: "Error al crear el usuario",
+        message: error.message
+      });
     }
-};
+  };
+
+
 export const login = async (req,res)=>{
     const {email, password} = req.body
     try {
@@ -43,6 +57,7 @@ export const login = async (req,res)=>{
         res.cookie('token', token);
         res.json({
             id: userFound._id,
+            perfil:userFound.perfil,
             nombreCompleto:userFound.nombreCompleto,
             email:userFound.email,
             password:userFound.password
@@ -65,6 +80,7 @@ export const perfil = async(req,res) => {
 
     return res.json({
         id: userFound._id,
+
         nombreCompleto:userFound.nombreCompleto,
         email:userFound.email,
         password:userFound.password,
