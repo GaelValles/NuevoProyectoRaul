@@ -1,42 +1,50 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context.jsx';
-<<<<<<< HEAD
-=======
-import { useNavigate } from 'react-router-dom';
-import { registerPermiso } from '../api/auth.permiso.js';
+import { Link } from "react-router-dom";
 import Sidepage from '../components/sidebar.jsx';
->>>>>>> 41e8507045865e9156a96196e2ae6efbfaa7ae07
+import Swal from 'sweetalert2';
 
 function RegistrarPermisoPage() {
     const { register, handleSubmit } = useForm();
     const { registrarPermiso } = useAuth();
-    const [isClicked, setIsClicked] = useState(false);
 
     const onSubmit = handleSubmit(async (values) => {
         const formData = new FormData();
-        Object.keys(values).forEach(key => formData.append(key, values[key][0] || values[key]));
+        Object.keys(values).forEach(key => {
+            if (key === 'foto' && values[key][0]) {
+                formData.append(key, values[key][0]);
+            } else {
+                formData.append(key, values[key]);
+            }
+        });
+
         try {
             await registrarPermiso(formData);
+            Swal.fire({
+                icon: 'success',
+                title: 'Permiso registrado',
+                text: 'El permiso se ha registrado correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
         } catch (error) {
             console.error('Error al registrar el permiso:', error);
-            if (error.response) {
-                console.error('Error response data:', error.response.data);
-            }
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un problema al registrar el permiso.',
+            });
         }
     });
 
-    const handleClick = () => {
-        setIsClicked(true);
-        setTimeout(() => setIsClicked(false), 300);
-    };
-
     return (
         <div className="flex justify-center items-center h-screen bg-gray-100">
-            <div><Sidepage></Sidepage></div>
+            <div><Sidepage /></div>
             <div className="w-full max-w-3xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Permiso</h1>
+                    <Link to= "/permisos" className="bi bi-arrow-left flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2"></Link>
                     <form onSubmit={onSubmit} encType="multipart/form-data" className="mt-4 grid grid-cols-1 gap-4">
                         <div>
                             <div className="mb-4">
@@ -100,11 +108,8 @@ function RegistrarPermisoPage() {
                         <div className="col-span-full md:col-span-2 flex justify-center">
                             <button
                                 type="submit"
-                                id="botonIngresar"
-                                onClick={handleClick}
-                                className={`rounded-full text-white font-semibold py-2 px-4 w-full md:w-1/2 mt-4 transition duration-300 ease-in-out ${
-                                    isClicked ? 'bg-gray-500' : 'bg-gray-700 hover:bg-gray-900'
-                                }`}
+                                id="botonRegistrarPermiso"
+                                className='rounded-full text-white font-semibold py-2 px-4 w-full bg-gray-700 md:w-1/2 mt-4 transition duration-300 ease-in-out'
                             >
                                 Ingresar
                             </button>

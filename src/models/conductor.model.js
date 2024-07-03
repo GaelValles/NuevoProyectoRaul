@@ -64,7 +64,11 @@ const conductorSchema = new mongoose.Schema(
             public_id: String,
             secure_url: String,
         },
-
+        user:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'User',
+            required:true
+        }
     },
     {
         timestamps: true,

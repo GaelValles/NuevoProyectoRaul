@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ function ConductoresPage() {
     const [conductores, setConductores] = useState([]);
     const [selectedConductores, setSelectedConductores] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchConductores = async () => {
@@ -16,7 +17,7 @@ function ConductoresPage() {
             setConductores(conductoresData.filter(conductor => conductor.estatus !== false));
         };
         fetchConductores();
-    }, []);
+    }, [getConductors]);
 
     const handleDelete = async () => {
         if (selectedConductores.length === 0) {
@@ -74,6 +75,10 @@ function ConductoresPage() {
         });
     };
 
+    const handleCardClick = (idconductor) => {
+        navigate(`/perfilConductor/${idconductor}`);
+    };
+
     const filteredConductores = conductores.filter((conductor) =>
         conductor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         conductor.numGafete.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -93,7 +98,7 @@ function ConductoresPage() {
                             placeholder="Buscar..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="border-l-transparent border-blue-500 border-r-transparent border-t-transparent border-b-2 border-solid mt-3 mr-2"
+                            className="border-l-transparent border-gray-800 border-r-transparent border-t-transparent border-b-2 border-solid mt-3 mr-2"
                             style={{ width: '400px' }}
                         />
                         <button className="text-gray-500">
@@ -101,8 +106,7 @@ function ConductoresPage() {
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <button className="bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2"></button>
-                        <button className="bi bi-arrow-clockwise flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Actualizar</button>
+                    <Link to= "/registrar" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
                         <button onClick={handleDelete} className="bi bi-trash flex items-center bg-red-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-red-600 mr-2"> Eliminar</button>
                     </div>
                 </div>
@@ -112,22 +116,21 @@ function ConductoresPage() {
                     ) : (
                         <>
                             {filteredConductores.map((conductor) => (
-                                <div key={conductor._id} className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between">
+                                <div key={conductor._id} className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between cursor-pointer" onClick={() => handleCardClick(conductor._id)}>
                                     <div>
-                                        <h1 className="text-xl font-semibold">{conductor.nombre} {conductor.numGafete}</h1>
-                                        <p className="text-gray-600">{conductor.numLicencia}</p>
-                                        <p className="text-gray-600">{conductor.numVisa}</p>
+                                        <h1 className="text-xl font-semibold">{conductor.nombre} </h1>
+                                        <p className="text-gray-600">Número de gafete: {conductor.numGafete}</p>
+                                        <p className="text-gray-600">Número de licencia: {conductor.numLicencia}</p>
+                                        <p className="text-gray-600">Número de visa: {conductor.numVisa}</p>
                                     </div>
-                                    <div className="flex items-center justify-between mt-4">
+                                    <div className="flex items-center rounded-full justify-between mt-4">
                                         <input 
                                             type="checkbox" 
-                                            className="rounded-xl mr-2" 
+                                            className="rounded-full mr-2" 
                                             onChange={() => handleCheckboxChange(conductor._id)}
                                             checked={selectedConductores.includes(conductor._id)}
+                                            onClick={(e) => e.stopPropagation()} // Evitar que el checkbox active el evento de click en el card
                                         />
-                                        <Link to={`/editar-conductor/${conductor._id}`} className="text-blue-500">
-                                            <i className="bi bi-pencil"></i>
-                                        </Link>
                                     </div>
                                 </div>
                             ))}

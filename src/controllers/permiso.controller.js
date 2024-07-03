@@ -1,10 +1,11 @@
 import Permiso from "../models/permiso.model.js";
 import fs from "fs-extra";
 import { uploadFoto } from "../libs/cloudinary.js";
+
 //Obtener todos los permisos
 export const getPermisos = async (req, res) => {
     try {
-      const permisos = await Permiso.find();
+      const permisos = await Permiso.find({user:req.user.id}).populate('user');
       res.json(permisos);
     } catch (error) {
       return res.status(500).json({
@@ -13,39 +14,12 @@ export const getPermisos = async (req, res) => {
       });
     }
   };
-  
-  //Obtener un permiso por id
-  export const getPermiso = async (req, res) => {
-    try {
-      const permiso = await Permiso.findById(req.params.id);
-  
-      if (!permiso)
-        return res.status(404).json({ message: "Permiso no encontrado" });
-      res.json(permiso);
-    } catch (error) {
-      return res.status(500).json({
-        message: "Error al obtener el permiso",
-        error,
-      });
-    }
-  };
-  
-  //Crear un permiso
-  export const postPermiso = async (req, res) => {
-    try {
-      const {
-        titulo,
-        fechaFinal,
-        descripcion,
-        avisoAntelacion,
-      } = req.body;
-  
-      const newPermiso = new Permiso({
-        titulo,
-        fechaFinal,
-        descripcion,
-        avisoAntelacion,
-      });
+
+//Crear un permiso
+export const postPermiso = async (req, res) => {
+      const { titulo, fechaFinal, descripcion, avisoAntelacion } = req.body;  
+  try {
+      const newPermiso = new Permiso({ titulo, fechaFinal, descripcion, avisoAntelacion, user: req.user.id });
 
       if (req.files?.foto) {
         const result = await uploadFoto(req.files.foto.tempFilePath)
@@ -64,10 +38,26 @@ export const getPermisos = async (req, res) => {
         error,
       });
     }
-  };
+};
   
-  //actualizar un permiso por id
-  export const updatePermiso = async (req, res) => {
+//Obtener solo un permiso por id
+export const getPermiso = async (req, res) => {
+    try {
+      const permiso = await Permiso.findById(req.params.id);
+      if (!permiso) {
+        return res.status(404).json({ message: "Permiso no encontrado" });
+      }
+      res.json(permiso);
+    } catch (error) {
+      return res.status(500).json({
+        message: "Error al obtener el permiso",
+        error,
+      });
+    }
+};
+
+//actualizar un permiso por id
+export const updatePermiso = async (req, res) => {
     try {
       const permiso = await Permiso.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -82,7 +72,7 @@ export const getPermisos = async (req, res) => {
         error,
       });
     }
-  };
+};
   
   //Eliminar un permiso por id
   export const deletePermiso = async (req, res) => {

@@ -12,7 +12,7 @@ async function main() {
   const __dirname = path.dirname(__filename);
 
   app.set('../client/pages', path.join(__dirname, "pages"));
-  app.set('view engine', 'ejs');
+  app.set('view engine', 'jsx');
 }
 
 main();

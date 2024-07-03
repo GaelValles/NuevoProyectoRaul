@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
     },
     telefono:{
         type:String,
+        trim: true,
         required: true,
         unique: true
     },

@@ -1,6 +1,8 @@
-import axios from "axios";
+import axios from "./axios";
 
+export const loginRequest = user => axios.post(`/login`, user)
 
-export const loginRequest = user => axios.post(`http://localhost:3000/login`, user)
+export const verifyTokenRequest = async () => axios.get(`/verify`);
+        
+export const getUserRequest = () => axios.get(`/perfil`);
 
-export const getAllConductors = () => axios.get('http://localhost:3000/conductores', { withCredentials: true });

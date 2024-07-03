@@ -24,46 +24,20 @@ const uploadFile = async (file, uploadFunction) => {
 };
 
 // Obtener todos los conductores
-
 export const getConductors = async (req, res) => {
   try {
-      const conductors = await Conductor.find();
+      const conductors = await Conductor.find({user:req.user.id}).populate('user');
       res.json(conductors);
   } catch (error) {
       res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteConductor = async (req, res) => {
-  try {
-      const { id } = req.params;
-      await Conductor.findByIdAndDelete(id);
-      res.status(204).send();
-  } catch (error) {
-      res.status(500).json({ message: error.message });
-  }
-};
-// Obtener un conductor por id
-export const getConductor = async (req, res) => {
-  try {
-    const conductor = await Conductor.findById(req.params.id);
-    if (!conductor) {
-      return res.status(404).json({ message: "Conductor no encontrado" });
-    }
-    res.json(conductor);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error al obtener el conductor",
-      error,
-    });
-  }
-};
-
 // Crear un conductor
 export const postConductores = async (req, res) => {
-  try {
     const { nombre, fechaNacimiento, numLicencia, numVisa, numGafete } = req.body;
-    const newConductor = new Conductor({ nombre, fechaNacimiento, numLicencia, numVisa, numGafete });
+  try {
+    const newConductor = new Conductor({ nombre, fechaNacimiento, numLicencia, numVisa, numGafete, user: req.user.id });
 
     const fileUploads = {
       solicitud: uploadSolicitud,
@@ -87,6 +61,32 @@ export const postConductores = async (req, res) => {
     res.json(savedConductor);
   } catch (error) {
     return res.status(500).json({ message: error.message });
+  }
+};
+
+// Obtener un conductor por id
+export const getConductor = async (req, res) => {
+  try {
+    const conductor = await Conductor.findById(req.params.id);
+    if (!conductor) {
+      return res.status(404).json({ message: "Conductor no encontrado" });
+    }
+    res.json(conductor);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al obtener el conductor",
+      error,
+    });
+  }
+};
+
+export const deleteConductor = async (req, res) => {
+  try {
+      const { id } = req.params;
+      await Conductor.findByIdAndDelete(id);
+      res.status(204).send();
+  } catch (error) {
+      res.status(500).json({ message: error.message });
   }
 };
 

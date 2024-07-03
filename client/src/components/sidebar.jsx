@@ -5,9 +5,11 @@ import Swal from 'sweetalert2';
 
 function Sidepage() {
   const { logout, user } = useAuth();
+
   const toggleSidebar = () => {
     document.querySelector('.sidebar').classList.toggle('hidden');
   };
+
   const handleLogout = () => {
     Swal.fire({
       title: 'Seguro de salir?',
@@ -33,6 +35,17 @@ function Sidepage() {
 
       <div className="sidebar fixed top-0 bottom-0 left-0 lg:left-0 p-2 w-[300px] overflow-y-auto text-center bg-white shadow-lg h-screen z-10 lg:block hidden">
         <div className="text-black text-xl">
+
+          {/* Perfil del Usuario */}
+          <div className="p-2.5 mt-1 flex items-center rounded-md">
+            <img 
+              src={user.perfil?.secure_url || 'default_image_url'}  // Usa 'default_image_url' si no hay imagen disponible
+              alt="Profile" 
+              className="w-32 h-16"
+            />
+
+          </div>
+
           <div className="p-2.5 mt-1 flex items-center justify-end rounded-md">
             <i className="bi bi-x cursor-pointer lg:hidden" onClick={toggleSidebar} style={{ fontSize: '2rem' }}></i>
           </div>
@@ -53,18 +66,18 @@ function Sidepage() {
           </div>
 
           <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/Flujo"><i className="bi bi-truck hover:text-blue-700"></i></Link>
-            <Link to="/Flujo"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Camiones</span></Link>
+            <Link to="/camiones"><i className="bi bi-truck hover:text-blue-700"></i></Link>
+            <Link to="/camiones"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Camiones</span></Link>
           </div>
           
           <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/Ventas"><i className="bi bi-archive-box hover:text-blue-700"></i></Link>
-            <Link to="/Ventas"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Cajas</span></Link>
+            <Link to="/cajas"><i className="bi bi-archive-box hover:text-blue-700"></i></Link>
+            <Link to="/cajas"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Cajas</span></Link>
           </div>
 
           <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/Perfil"><i className="bi bi-person-circle hover:text-blue-700"></i></Link>
-            <Link to="/Perfil"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Perfil</span></Link>
+            <Link to="/perfil"><i className="bi bi-person-circle hover:text-blue-700"></i></Link>
+            <Link to="/perfil"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Perfil</span></Link>
           </div>
 
           <hr className="my-4 text-gray-600" />

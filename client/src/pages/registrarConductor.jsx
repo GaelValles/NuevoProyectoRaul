@@ -1,37 +1,51 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth.context';
 import Sidepage from '../components/sidebar';
- 
-function RegistrarConductorPage() {
+import Swal from 'sweetalert2';
 
-    const { register, handleSubmit, formState: { errors } } = useForm();
-    const { registrarConductor, isAuth } = useAuth();
+function RegistrarConductorPage() {
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
+    const { registrarConductor } = useAuth();
     const navigate = useNavigate();
-   
-    useEffect(() => {
-        if (isAuth) navigate("/inicio");
-    }, [isAuth, navigate]);
 
     const onSubmit = handleSubmit(async (values) => {
         const formData = new FormData();
-        Object.keys(values).forEach(key => formData.append(key, values[key][0] || values[key]));
+        Object.keys(values).forEach(key => {
+            if (values[key] instanceof FileList) {
+                formData.append(key, values[key][0]);
+            } else {
+                formData.append(key, values[key]);
+            }
+        });
         try {
             await registrarConductor(formData);
-            
+            Swal.fire({
+                title: 'Conductor registrado',
+                text: 'El conductor se ha registrado correctamente.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+            reset(); // Resetear el formulario después de enviar
         } catch (error) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Hubo un error al registrar el conductor. Inténtalo de nuevo.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
             console.error(error);
         }
-});
+    });
 
     return (
-        
         <div className="flex justify-center items-center h-screen">
-            <div><Sidepage></Sidepage></div>
+            <Sidepage />
             <div className="w-full max-w-4xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Conductor</h1>
+                    <Link to="/conductores" className="bi bi-arrow-left flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2"></Link>
                     <form onSubmit={onSubmit} encType="multipart/form-data" className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <div className="mb-4">
@@ -43,7 +57,7 @@ function RegistrarConductorPage() {
                                     placeholder="Nombre completo"
                                     {...register('nombre', { required: true })}
                                 />
-                                {errors.nombre && <p className="text-red-500">nombre es requerido</p>}
+                                {errors.nombre && <p className="text-red-500">Nombre es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -63,9 +77,9 @@ function RegistrarConductorPage() {
                                     id="numLicencia"
                                     type="text"
                                     placeholder="No. Licencia"
-                                    {...register('numLicencia', { required: true, min: 10 })}
+                                    {...register('numLicencia', { required: true, minLength: 10 })}
                                 />
-                                {errors.numLicencia && <p className="text-red-500">El numero de la licencia es requerida</p>}
+                                {errors.numLicencia && <p className="text-red-500">El número de la licencia es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -74,9 +88,9 @@ function RegistrarConductorPage() {
                                     id="numVisa"
                                     type="text"
                                     placeholder="No. Visa"
-                                    {...register('numVisa', { required: true, min: 12  })}
+                                    {...register('numVisa', { required: true, minLength: 12 })}
                                 />
-                                {errors.numVisa && <p className="text-red-500">El numero de la visa es requerida</p>}
+                                {errors.numVisa && <p className="text-red-500">El número de la visa es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <input
@@ -85,11 +99,10 @@ function RegistrarConductorPage() {
                                     id="numGafete"
                                     type="text"
                                     placeholder="No. Gafete"
-                                    {...register('numGafete', { required: true, min: 9 })}
+                                    {...register('numGafete', { required: true, minLength: 9 })}
                                 />
-                                {errors.numGafete && <p className="text-red-500">El numero del gafete es requerida</p>}
+                                {errors.numGafete && <p className="text-red-500">El número del gafete es requerido</p>}
                             </div>
-                            
                         </div>
                         <div>
                             <div className="mb-4">
@@ -151,7 +164,7 @@ function RegistrarConductorPage() {
                                     AntiDoping
                                 </label>
                                 <input
-                                    className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="border border-gray-700 w-full py-1 px-2 text-gray"
                                     name="antidoping"
                                     id="antidoping"
                                     type="file"
@@ -170,11 +183,11 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('antecedentes', { required: true })}
                                 />
-                                {errors.antecedentes && <p className="text-red-500">los antecedentes penales son requeridos</p>}
+                                {errors.antecedentes && <p className="text-red-500">Los antecedentes penales son requeridos</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="domicilio">
-                                    Comprobante de Domicilio
+                                    Domicilio
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -183,11 +196,11 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('domicilio', { required: true })}
                                 />
-                                {errors.domicilio && <p className="text-red-500">El domicilio es requerido</p>}
+                                {errors.domicilio && <p className="text-red-500">El documento de domicilio es requerido</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="psicofisico">
-                                    Prueba PsicoFisica
+                                    Prueba Psicofísica
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -196,11 +209,11 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('psicofisico', { required: true })}
                                 />
-                                {errors.psicofisico && <p className="text-red-500">La prueba psicofisica es requerida</p>}
+                                {errors.psicofisico && <p className="text-red-500">La prueba psicofísica es requerida</p>}
                             </div>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aduana">
-                                    Licencia de Aduanas
+                                    Licencia de Aduana
                                 </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -210,14 +223,12 @@ function RegistrarConductorPage() {
                                     {...register('aduana', { required: true })}
                                 />
                                 {errors.aduana && <p className="text-red-500">La licencia de aduana es requerida</p>}
-
                             </div>
                         </div>
-                        <div className="col-span-full">
+                        <div className="col-span-1 md:col-span-3 text-center mt-6">
                             <button
                                 type="submit"
-                                id="botonIngresar"
-                                className="rounded-full bg-gray-700 hover:bg-gray-900 text-white font-semibold py-2 px-4 w-full mt-4 transition duration-300 ease-in-out"
+                                className="bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-gray-700"
                             >
                                 Registrar
                             </button>
@@ -228,7 +239,5 @@ function RegistrarConductorPage() {
         </div>
     );
 }
-
 export default RegistrarConductorPage;
-
 
