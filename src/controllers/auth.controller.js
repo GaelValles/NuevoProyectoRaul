@@ -11,7 +11,7 @@ import { uploadPerfil } from "../libs/cloudinary.js";
 export const registrar = async (req, res) => {
   const { nombreCompleto, email, telefono, password } = req.body;
   try {
-    const userFound = await User.findOne({email});
+    const userFound = await User.findOne();
     if (!userFound)
       return res.status(400).json({ message: ["Esta cuenta ya existe"]});
     const passwordHash = await bcrypt.hash(password, 10);
@@ -20,7 +20,7 @@ export const registrar = async (req, res) => {
       nombreCompleto,
       email,
       telefono,
-      password:passwordHash
+      password:passwordHash,
     });
 
     if (req.files?.perfil) {
@@ -60,7 +60,7 @@ export const registrar = async (req, res) => {
         const isMatch = await bcrypt.compare(password, userFound.password);
         if (!isMatch) return res.status(400).json({ message: "Datos invalidos" });
 
-        const token = await createAccessToken({ id: userFound._id });
+        const token = await createAccessToken({ id: userFound._id, email: userFound.email });
         res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'none' });
         
         res.json({

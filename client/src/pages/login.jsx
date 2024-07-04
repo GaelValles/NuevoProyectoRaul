@@ -15,6 +15,21 @@ function LoginPage() {
         login(data);
     });
 
+    if (login()) {
+        navigate("/Inicio");
+        Swal.fire({
+          icon: 'success',
+          title: '¡Inicio de sesión exitoso!',
+          text: 'Bienvenido de vuelta',
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Acceso denegado',
+          text: 'No tienes permiso para acceder.',
+        });
+      }
+
     return (
         <div className="flex h-screen">
             <div className="w-2/5 h-full">

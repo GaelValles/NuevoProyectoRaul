@@ -107,6 +107,12 @@ export const AuthProvider = ({ children }) => {
         setIsAuth(true);
     };
 
+    const registrarPermiso = async (permiso) => {
+        const res = await registerPermiso(permiso);
+        setPermiso(res.data);
+        setIsAuth(true);
+    };
+
     const getCamiones = async () => {
         const response = await getAllCamiones();
         return response.data;
@@ -195,6 +201,7 @@ export const AuthProvider = ({ children }) => {
             login,
             logout,
             registrarConductor,
+            registrarPermiso,
             registrarCamion,
             registrarCaja,
             getConductorById,

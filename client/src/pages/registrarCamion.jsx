@@ -105,6 +105,17 @@ function RegistrarCamionPage() {
                                     {...register('numSerie', { required: true })}
                                 />
                             </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="mantenimiento">
+                                    Ultimo mantenimiento realizado
+                                </label>
+                                <input
+                                    className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    id="mantenimiento"
+                                    type="date"
+                                    {...register('mantenimiento', { required: true })}
+                                />
+                            </div>
                         </div>
                         <div className="col-span-full md:col-span-2 flex justify-center">
                             <button

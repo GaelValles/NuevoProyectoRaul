@@ -1,3 +1,4 @@
+
 import mongoose from 'mongoose'
 
 const camionSchema = new mongoose.Schema({
@@ -30,6 +31,10 @@ const camionSchema = new mongoose.Schema({
     numSerie:{
         type:String,
         required: true
+    },
+    mantenimiento:{
+        type: Date,
+        required:true 
     },
     user:{
         type: mongoose.Schema.Types.ObjectId,

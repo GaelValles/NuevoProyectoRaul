@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
+import { deletePermisoRequest } from "../api/auth.permiso";
 
 function PermisosPage() {
-    const { user, getPermisos, deletePermisoRequest } = useAuth();
+    const { user, getPermisos } = useAuth();
     const [permisos, setPermisos] = useState([]);
     const [selectedPermisos, setSelectedPermisos] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -42,8 +43,8 @@ function PermisosPage() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await Promise.all(selectedPermisos.map(async (idpermiso) => {
-                        await deletePermisoRequest(idpermiso);
+                    await Promise.all(selectedPermisos.map(async (id) => {
+                        await deletePermisoRequest(id);
                     }));
                     const updatedPermisos = permisos.filter(permiso => !selectedPermisos.includes(permiso._id));
                     setPermisos(updatedPermisos);

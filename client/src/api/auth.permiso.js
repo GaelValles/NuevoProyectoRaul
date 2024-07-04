@@ -10,3 +10,4 @@ export const getAllPermisos = () => axios.get(`/permisos`);
 
 export const getPermisoRequest= (id) => axios.get(`/permiso/${id}`);
 
+export const deletePermisoRequest = (id) => axios.delete(`/permiso/${id}/delete`);

@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
+import { deleteCamionRequest } from "../api/auth.camion";
 
 function CamionesPage() {
-    const { user, getCamiones, deleteCamionRequest } = useAuth();
+    const { user, getCamiones } = useAuth();
     const [camiones, setCamiones] = useState([]);
     const [selectedCamiones, setSelectedCamiones] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');

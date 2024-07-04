@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
+import { deleteConductorRequest } from "../api/auth.conductor";
 
 function ConductoresPage() {
     const { user, getConductors } = useAuth();

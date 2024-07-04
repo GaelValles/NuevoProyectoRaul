@@ -49,7 +49,16 @@ export const updateCaja = async (req, res) => {
 
 //Eliminar caja
 export const deleteCaja = async (req, res) => {
-  const caja = await Caja.findByIdAndDelete(req.params.id)
-  if (!caja) return res.status(404).json({message: "Caja no encontrada"})
-  return res.sendStatus(204)
+  try {
+    const caja = await Caja.findByIdAndDelete(req.params.id);
+
+    if (!caja)
+      return res.status(404).json({ message: "Caja no encontrado" });
+    return res.sendStatus(204);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al eliminar la caja",
+      error,
+    });
+  }
 };

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
-
+import { deleteCajaRequest } from "../api/auth.caja";
 function CajasPage() {
     const { user, getCajas } = useAuth();
     const [cajas, setCajas] = useState([]);

@@ -7,6 +7,7 @@ import conductorRoutes from "./routes/conductor.routes.js";
 import permisoRoutes from "./routes/permiso.routes.js";
 import camionRoutes from "./routes/camion.routes.js";
 import cajaRoutes from "./routes/caja.routes.js";
+import './services/cronService.js'; 
 const app = express();
 
 app.use(cors({

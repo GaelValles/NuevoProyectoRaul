@@ -1,7 +1,7 @@
 import Permiso from "../models/permiso.model.js";
+
 import fs from "fs-extra";
 import { uploadFoto } from "../libs/cloudinary.js";
-
 //Obtener todos los permisos
 export const getPermisos = async (req, res) => {
     try {
@@ -19,7 +19,8 @@ export const getPermisos = async (req, res) => {
 export const postPermiso = async (req, res) => {
       const { titulo, fechaFinal, descripcion, avisoAntelacion } = req.body;  
   try {
-      const newPermiso = new Permiso({ titulo, fechaFinal, descripcion, avisoAntelacion, user: req.user.id });
+    console.log(req)
+      const newPermiso = new Permiso({ titulo, fechaFinal, descripcion, avisoAntelacion, user: req.user.id, userEmail: req.user.email  });
 
       if (req.files?.foto) {
         const result = await uploadFoto(req.files.foto.tempFilePath)
@@ -32,6 +33,8 @@ export const postPermiso = async (req, res) => {
 
       const savedPermiso = await newPermiso.save();
       res.json(savedPermiso);
+      console.log(savedPermiso);
+      console.log(savedPermiso)
     } catch (error) {
       return res.status(500).json({
         message: "Error al crear el permiso",

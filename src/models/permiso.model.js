@@ -28,7 +28,12 @@ const permisoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'User',
         required:true
-    }
+    },
+    userEmail: {
+        type: mongoose.Schema.Types.String,
+        ref:'User',
+        required: true
+    },
 },
 {
     timestamps:true
