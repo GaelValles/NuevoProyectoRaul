@@ -3,8 +3,9 @@ import { useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
-import fondoImg from '../assets/images/camionLogin.jpg'; // Importa la imagen directamente
-import { setErrorMap } from 'zod';
+import fondoImg from '../assets/images/camionLogin.jpg';
+import Swal from 'sweetalert2';
+
 
 function LoginPage() {
     const { login, errors: loginErrors, isAuth } = useAuth();
@@ -13,22 +14,23 @@ function LoginPage() {
 
     const onSubmit = handleSubmit((data) => {
         login(data);
+        if (login(data)) {
+            navigate("/Inicio");
+            Swal.fire({
+              icon: 'success',
+              title: '¡Inicio de sesión exitoso!',
+              text: 'Bienvenido de vuelta',
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Acceso denegado',
+              text: 'No tienes permiso para acceder.',
+            });
+          }
     });
 
-    if (login()) {
-        navigate("/Inicio");
-        Swal.fire({
-          icon: 'success',
-          title: '¡Inicio de sesión exitoso!',
-          text: 'Bienvenido de vuelta',
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Acceso denegado',
-          text: 'No tienes permiso para acceder.',
-        });
-      }
+
 
     return (
         <div className="flex h-screen">

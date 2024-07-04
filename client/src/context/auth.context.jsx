@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest, verifyTokenRequest } from "../api/auth.js";
 import { registerConductor, getAllConductors, getConductorRequest } from "../api/auth.conductor.js";
-import { registerPermiso, getAllPermisos, getPermisoRequest } from "../api/auth.permiso.js";
+import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest } from "../api/auth.permiso.js";
 import { getAllCamiones, registerCamion, getCamionRequest } from "../api/auth.camion.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
@@ -129,6 +129,15 @@ export const AuthProvider = ({ children }) => {
         return response.data;
     };
 
+    //actualiza el status
+    const updateStatus = async (idpermiso, status) =>{
+        try {
+            await UpdateStatusRequest(idpermiso, status);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     useEffect(() => {
         if (errors.length > 0) {
             const timer = setTimeout(() => {
@@ -212,6 +221,7 @@ export const AuthProvider = ({ children }) => {
             getPermisos,
             getCamiones,
             getCajas,
+            updateStatus,
             setIsAuth,
             errors,
             isAuth,

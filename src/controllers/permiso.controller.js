@@ -20,7 +20,7 @@ export const postPermiso = async (req, res) => {
       const { titulo, fechaFinal, descripcion, avisoAntelacion } = req.body;  
   try {
     console.log(req)
-      const newPermiso = new Permiso({ titulo, fechaFinal, descripcion, avisoAntelacion, user: req.user.id, userEmail: req.user.email  });
+      const newPermiso = new Permiso({ titulo, fechaFinal, descripcion, avisoAntelacion, status: true, user: req.user.id, userEmail: req.user.email  });
 
       if (req.files?.foto) {
         const result = await uploadFoto(req.files.foto.tempFilePath)
@@ -93,3 +93,22 @@ export const updatePermiso = async (req, res) => {
     }
   };
   
+//Cambiar status en el permiso
+export const cambioStatus = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { status } = req.body;
+      const permiso = await Permiso.findByIdAndUpdate(id, {
+          status: status,
+      }, { new: true });
+
+      if (!permiso) {
+          return res.status(404).json({ message: "Permiso no encontrado" });
+      }
+
+      res.status(200).json({ message: "Cambio de status", permiso });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error al realizar el cambio de status" });
+  }
+};

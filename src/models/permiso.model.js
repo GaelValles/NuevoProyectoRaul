@@ -24,6 +24,9 @@ const permisoSchema = new mongoose.Schema({
         type: Date,
         required:true
     },
+    status:{
+        type:Boolean,
+    },
     user:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'User',
