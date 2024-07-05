@@ -8,7 +8,6 @@ import RegistrarPermisoPage from './pages/registrarPermiso';
 import RegistrarCamionPage from './pages/registrarCamion.jsx';
 import RegistrarCajaPage from './pages/registrarCaja.jsx';
 
-import HomePage from './pages/home';
 import InicioPage from './pages/inicio';
 import PerfilPage from './pages/perfil';
 
@@ -22,12 +21,13 @@ import PerfilPermisoPage from './pages/perfilPermiso.jsx';
 import PerfilCamionPage from './pages/perfilCamion.jsx';
 import PerfilCajaPage from './pages/perfilCaja.jsx';
 
+
 function App(){
   return (
     <AuthProvider>
       <BrowserRouter>
       <Routes>
-        <Route path='/' element={ <HomePage /> }/>
+        <Route path='/' element={ <LoginPage /> }/>
         <Route path='/login' element={ <LoginPage /> }/>
         <Route element={<ProtectedRoute />}>
           
@@ -47,6 +47,7 @@ function App(){
           <Route path='/registrarCamion' element={<RegistrarCamionPage />}/>
           <Route path='/registrar' element={ <RegistrarConductorPage />}/>
           <Route path='/registrarCaja' element={<RegistrarCajaPage />}/>
+
           <Route path='/perfil' element={<PerfilPage/>}/>
         </Route>
       </Routes>

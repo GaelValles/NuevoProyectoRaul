@@ -10,8 +10,11 @@ import {
   uploadPsicofisico,
   uploadAduana,
   deleteFile,
+  download
 } from "../libs/cloudinary.js";
 import fs from "fs-extra";
+import path from "path";
+import archiver from "archiver";
 
 // Función auxiliar para subir archivos
 const uploadFile = async (file, uploadFunction) => {
@@ -147,5 +150,35 @@ export const deleteConductores = async (req, res) => {
       message: "Error al eliminar el conductor",
       error,
     });
+  }
+};
+export const getConductorFiles = async (req, res) => {
+  try {
+      const conductor = await Conductor.findById(req.params.id);
+      if (!conductor) {
+          return res.status(404).json({ message: 'Conductor no encontrado.' });
+      }
+
+      const files = [
+          conductor.solicitud,
+          conductor.ine,
+          conductor.visa,
+          conductor.fast,
+          conductor.antidoping,
+          conductor.antecedentes,
+          conductor.domicilio,
+          conductor.psicofisico,
+          conductor.aduana,
+      ];
+
+      const fileData = await Promise.all(files.map(async file => {
+          const response = await cloudinary.uploader.download(file);
+          return { name: file.split('/').pop(), data: response.data };
+      }));
+
+      res.json(fileData);
+  } catch (error) {
+      console.error("Error al obtener archivos del conductor:", error);
+      res.status(500).json({ message: 'Error al obtener archivos del conductor.' });
   }
 };

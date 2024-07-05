@@ -57,6 +57,10 @@ cloudinary.config({
     return await cloudinary.uploader.destroy(public_id);
     }
 
+    export async function download(filePath) {
+        return await cloudinary.api.resource(filePath);
+    }
+
 //Permisos
     //Subir archivos
     export async function uploadFoto(filePath) {

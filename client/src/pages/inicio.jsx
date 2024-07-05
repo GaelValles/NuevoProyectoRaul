@@ -85,12 +85,8 @@ function InicioPage() {
 
                 if (daysDiff < 0) {
                     categorized.expired.push({ ...camion, type: isAnnualMaintenanceDue ? 'Anual' : 'Preventivo' });
-                } else if (daysDiff <= 7) {
-                    categorized.oneWeek.push({ ...camion, type: isAnnualMaintenanceDue ? 'Anual' : 'Preventivo' });
                 } else if (daysDiff <= 30) {
                     categorized.oneMonth.push({ ...camion, type: isAnnualMaintenanceDue ? 'Anual' : 'Preventivo' });
-                } else {
-                    categorized.moreThanMonth.push({ ...camion, type: isAnnualMaintenanceDue ? 'Anual' : 'Preventivo' });
                 }
             }
         });
@@ -107,7 +103,9 @@ function InicioPage() {
             <div className="flex-1 p-6 bg-gray-100 min-h-screen ml-[300px]">
                 <h2 className="text-2xl font-semibold mb-4 text-right">Bienvenido, {user.nombreCompleto}!</h2>
                 {loading ? (
-                    <p className="text-center">Cargando permisos y camiones...</p>
+                        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-70 flex justify-center items-center">
+                            <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
+                        </div>
                 ) : (
                     <div>
                         {/* Permisos */}

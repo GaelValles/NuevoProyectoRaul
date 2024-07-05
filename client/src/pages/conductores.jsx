@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
-import { deleteConductorRequest } from "../api/auth.conductor";
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 
 function ConductoresPage() {
-    const { user, getConductors } = useAuth();
+    const { user, getConductors, getConductorFiles } = useAuth();
     const [conductores, setConductores] = useState([]);
     const [selectedConductores, setSelectedConductores] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -80,6 +81,60 @@ function ConductoresPage() {
         navigate(`/perfilConductor/${idconductor}`);
     };
 
+    const handleDownload = async () => {
+        if (selectedConductores.length === 0) {
+            Swal.fire({
+                title: 'Atención',
+                text: 'Debes seleccionar al menos un conductor para descargar sus archivos.',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+            });
+            return;
+        }
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Se descargarán los archivos de los conductores seleccionados",
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, descargar',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const zip = new JSZip();
+
+                    await Promise.all(selectedConductores.map(async (idconductor) => {
+                        const files = await getConductorFiles(idconductor);
+                        const folder = zip.folder(`conductor_${idconductor}`);
+
+                        files.forEach(file => {
+                            folder.file(file.name, file.data, { base64: true });
+                        });
+                    }));
+
+                    const content = await zip.generateAsync({ type: 'blob' });
+                    saveAs(content, 'conductores_archivos.zip');
+
+                    Swal.fire(
+                        'Descargados!',
+                        'Los archivos de los conductores seleccionados han sido descargados.',
+                        'success'
+                    );
+                } catch (error) {
+                    console.error("Error al descargar archivos de los conductores:", error);
+                    Swal.fire(
+                        'Error!',
+                        'Ocurrió un error al intentar descargar los archivos de los conductores seleccionados.',
+                        'error'
+                    );
+                }
+            }
+        });
+    };
+
     const filteredConductores = conductores.filter((conductor) =>
         conductor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
         conductor.numGafete.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -107,7 +162,8 @@ function ConductoresPage() {
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                    <Link to= "/registrar" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
+                        <button onClick={handleDownload} className="bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2">Descargar</button>
+                        <Link to= "/registrar" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
                         <button onClick={handleDelete} className="bi bi-trash flex items-center bg-red-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-red-600 mr-2"> Eliminar</button>
                     </div>
                 </div>

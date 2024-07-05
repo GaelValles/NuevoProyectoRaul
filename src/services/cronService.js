@@ -8,7 +8,7 @@ const checkPermisos = async () => {
         const permisos = await Permiso.find().populate('user');
         const today = new Date();
         console.log('Verificando permisos...', today);
-
+        
         permisos.forEach(permiso => {
             const avisoDate = new Date(permiso.fechaFinal);
             avisoDate.setDate(avisoDate.getDate() - permiso.avisoAntelacion);

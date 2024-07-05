@@ -20,3 +20,7 @@ export const restoreUserRequest = async (id) => {
         throw new Error("Error al restaurar el conductor");
     }
 };
+
+export const getConductorFilesRequest = async (idconductor) => {
+    return await axios.get(`/conductor/${idconductor}/files`);
+};

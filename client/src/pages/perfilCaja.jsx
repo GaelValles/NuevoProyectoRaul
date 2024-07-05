@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import SidePage from "../components/sidebar";
 import { Document, Page } from 'react-pdf';
+import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import doc from '../assets/images/doc.png';
 
@@ -10,11 +11,11 @@ Modal.setAppElement('#root');
 
 function PerfilCajaPage() {
     const { id } = useParams();
-    const { getCajaById } = useAuth();
+    const { getCajaById, actualizarCaja } = useAuth();
     const [caja, setCaja] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchCaja = async () => {
             const cajaData = await getCajaById(id);
@@ -51,6 +52,11 @@ function PerfilCajaPage() {
     const handleLoadError = (error) => {
         console.error('Error al cargar el documento PDF:', error);
     };
+    const handleUpdate =async (idcaja)=>{
+        const res = await actualizarCaja(idcaja)
+        console.log(res)
+        navigate("/updateCaja");
+    }
 
     const renderDocumentOrPlaceholder = (url) => {
         if (url.endsWith('.pdf')) {
@@ -85,7 +91,7 @@ function PerfilCajaPage() {
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-4xl text-black">Datos de la caja</h1>
                     <button 
-                        onClick={() => window.location.reload()}
+                        onClick={handleUpdate}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
                     >
                         Actualizar

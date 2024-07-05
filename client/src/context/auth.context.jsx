@@ -5,7 +5,7 @@ import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest
 import { getAllCamiones, registerCamion, getCamionRequest } from "../api/auth.camion.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import { getAllCajas, registerCaja, getCajaRequest } from "../api/auth.caja.js";
+import { getAllCajas, registerCaja, getCajaRequest, updateCajaRequest } from "../api/auth.caja.js";
 import { cookie } from "express-validator";
 
 export const AuthContext = createContext();
@@ -138,6 +138,18 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const getConductorFiles = async (idconductor) => {
+        try {
+            const response = await getConductorFilesRequest(idconductor);
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener archivos del conductor:", error);
+            return [];
+        }
+    };
+
+
+
     useEffect(() => {
         if (errors.length > 0) {
             const timer = setTimeout(() => {
@@ -214,6 +226,7 @@ export const AuthProvider = ({ children }) => {
             registrarCamion,
             registrarCaja,
             getConductorById,
+            getConductorFiles,
             getPermisoById,
             getCamionById,
             getCajaById,
