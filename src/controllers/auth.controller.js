@@ -51,7 +51,7 @@ export const registrar = async (req, res) => {
   };
 
 
-  export const login = async (req, res) => {
+export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         const userFound = await User.findOne({ email });
@@ -78,7 +78,10 @@ export const registrar = async (req, res) => {
 
 export const logout = (req,res) =>{
     res.cookie('token', "", {
-        expires: new Date(0)
+        expires: new Date(0),
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none'
     })
     return res.sendStatus(200)
 }

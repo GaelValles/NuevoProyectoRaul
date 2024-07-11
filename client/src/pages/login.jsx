@@ -6,31 +6,28 @@ import { useNavigate } from 'react-router-dom';
 import fondoImg from '../assets/images/camionLogin.jpg';
 import Swal from 'sweetalert2';
 
-
 function LoginPage() {
     const { login, errors: loginErrors } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
 
-    const onSubmit = handleSubmit((user) => {
-        login(user);
-        if (login(user)) {
+    const onSubmit = handleSubmit(async (user) => {
+        const success = await login(user);
+        if (success) {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Inicio de sesión exitoso!',
+                text: 'Bienvenido de vuelta',
+            });
             navigate("/Inicio");
+        } else {
             Swal.fire({
-              icon: 'success',
-              title: '¡Inicio de sesión exitoso!',
-              text: 'Bienvenido de vuelta',
+                icon: 'error',
+                title: 'Acceso denegado',
+                text: 'No tienes permiso para acceder.',
             });
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Acceso denegado',
-              text: 'No tienes permiso para acceder.',
-            });
-          }
+        }
     });
-
-
 
     return (
         <div className="flex h-screen">
@@ -40,13 +37,12 @@ function LoginPage() {
             <div className="w-3/5 flex justify-center items-center">
                 <div className="bg-white rounded-xl border-2 border-gray-300 p-6 shadow-lg hover:shadow-2xl hover:shadow-gray-700 transition duration-200 ease-in-out max-w-md h-80 w-96">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Iniciar sesión</h1>
-
                     <form onSubmit={onSubmit} className="mt-4">
-                    {loginErrors.map((error, i) => (
-              <div className="bg-red-500 p-2 text-white text-center m-2 rounded-md" key={i}>
-                {error}
-              </div>
-            ))}
+                        {loginErrors.map((error, i) => (
+                            <div className="bg-red-500 p-2 text-white text-center m-2 rounded-md" key={i}>
+                                {error}
+                            </div>
+                        ))}
                         <div className="mb-4">
                             <input
                                 className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { loginRequest, verifyTokenRequest } from "../api/auth.js";
+import { loginRequest, verifyTokenRequest, logoutRequest } from "../api/auth.js";
 import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
 import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest } from "../api/auth.permiso.js";
 import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.camion.js";
@@ -26,13 +26,15 @@ export const AuthProvider = ({ children }) => {
     const [isAuth, setIsAuth] = useState(false);
     const [errors, setErrors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const login = async (user) => {
         try {
             const res = await loginRequest(user);
-            console.log("Esto llegó: ",res.data)
             setIsAuth(true);
             setUser(res.data);
+            setErrors([]);
+            return true;
         } catch (error) {
             if (Array.isArray(error.response.data)) {
                 setErrors(error.response.data);
@@ -42,11 +44,16 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const logout = () => {
-        Cookies.remove("token");
-        setIsAuth(false);
-        setUser(null);
-        window.location.href = "/login";
+    const logout = async () => {
+        try {
+            await logoutRequest();
+            Cookies.remove("token");
+            setIsAuth(false);
+            setUser(null);
+            navigate('/login');
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
     };
 
     const registrarConductor = async (conductor) => {
