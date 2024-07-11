@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     const [isAuth, setIsAuth] = useState(false);
     const [errors, setErrors] = useState([]);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+    
 
     const login = async (user) => {
         try {
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
             Cookies.remove("token");
             setIsAuth(false);
             setUser(null);
-            navigate('/login');
+            window.location.href = "/login";
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
