@@ -121,6 +121,10 @@ function PerfilCamionPage() {
                             <strong>Numero de serie:</strong>
                             <p>{camion.numSerie}</p>
                         </div>
+                        <div>
+                            <strong>Utimo mantenimiento:</strong>
+                            <p>{camion.mantenimiento}</p>
+                        </div>
                     </div>
                 </div>
             </div>
