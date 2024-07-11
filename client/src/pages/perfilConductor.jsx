@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import SidePage from "../components/sidebar";
 import { Document, Page } from 'react-pdf';
@@ -14,6 +14,7 @@ function PerfilConductorPage() {
     const [conductor, setConductor] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchConductor = async () => {
@@ -52,6 +53,10 @@ function PerfilConductorPage() {
         console.error('Error al cargar el documento PDF:', error);
     };
 
+    const handleUpdate = () => {
+        navigate(`/editarConductor/${id}`);
+    };
+
     const renderDocumentOrPlaceholder = (url) => {
         if (url.endsWith('.pdf')) {
             return renderDocument(url);
@@ -85,7 +90,7 @@ function PerfilConductorPage() {
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-4xl text-black">Perfil del Conductor</h1>
                     <button 
-                        onClick={() => window.location.reload()}
+                        onClick={handleUpdate}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
                     >
                         Actualizar

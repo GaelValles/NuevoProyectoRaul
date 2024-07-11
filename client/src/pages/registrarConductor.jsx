@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth.context';
@@ -9,8 +9,10 @@ function RegistrarConductorPage() {
     const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const { registrarConductor } = useAuth();
     const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
     const onSubmit = handleSubmit(async (values) => {
+        setIsLoading(true);
         const formData = new FormData();
         Object.keys(values).forEach(key => {
             if (values[key] instanceof FileList) {
@@ -36,6 +38,8 @@ function RegistrarConductorPage() {
                 confirmButtonText: 'OK'
             });
             console.error(error);
+        } finally {
+            setIsLoading(false);
         }
     });
 
@@ -45,7 +49,9 @@ function RegistrarConductorPage() {
             <div className="w-full max-w-4xl">
                 <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Registrar Conductor</h1>
-                    <Link to="/conductores" className="bi bi-arrow-left flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2"></Link>
+                    <Link to="/conductores" className="text-blue-500 hover:text-blue-700 transition duration-300">
+                                <i className="bi bi-arrow-left"></i> Volver
+                            </Link>
                     <form onSubmit={onSubmit} encType="multipart/form-data" className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <div className="mb-4">
@@ -164,7 +170,7 @@ function RegistrarConductorPage() {
                                     AntiDoping
                                 </label>
                                 <input
-                                    className="border border-gray-700 w-full py-1 px-2 text-gray"
+                                    className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     name="antidoping"
                                     id="antidoping"
                                     type="file"
@@ -184,11 +190,11 @@ function RegistrarConductorPage() {
                                     {...register('antecedentes', { required: true })}
                                 />
                                 {errors.antecedentes && <p className="text-red-500">Los antecedentes penales son requeridos</p>}
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="domicilio">
-                                    Domicilio
-                                </label>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="domicilio">
+                                        Domicilio
+                                    </label>
                                 <input
                                     className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                     name="domicilio"
@@ -196,48 +202,50 @@ function RegistrarConductorPage() {
                                     type="file"
                                     {...register('domicilio', { required: true })}
                                 />
-                                {errors.domicilio && <p className="text-red-500">El documento de domicilio es requerido</p>}
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="psicofisico">
-                                    Prueba Psicofísica
-                                </label>
-                                <input
-                                    className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    name="psicofisico"
-                                    id="psicofisico"
-                                    type="file"
-                                    {...register('psicofisico', { required: true })}
-                                />
-                                {errors.psicofisico && <p className="text-red-500">La prueba psicofísica es requerida</p>}
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aduana">
-                                    Licencia de Aduana
-                                </label>
-                                <input
-                                    className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                    name="aduana"
-                                    id="aduana"
-                                    type="file"
-                                    {...register('aduana', { required: true })}
-                                />
-                                {errors.aduana && <p className="text-red-500">La licencia de aduana es requerida</p>}
-                            </div>
-                        </div>
-                        <div className="col-span-1 md:col-span-3 text-center mt-6">
-                            <button
-                                type="submit"
-                                className="bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-gray-700"
-                            >
-                                Registrar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    );
-}
-export default RegistrarConductorPage;
-
+                                    {errors.domicilio && <p className="text-red-500">El documento de domicilio es requerido</p>}
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="psicofisico">
+                                        Prueba Psicofísica
+                                    </label>
+                                    <input
+                                        className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        name="psicofisico"
+                                        id="psicofisico"
+                                        type="file"
+                                        {...register('psicofisico', { required: true })}
+                                    />
+                                    {errors.psicofisico && <p className="text-red-500">La prueba psicofísica es requerida</p>}
+                                    </div>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aduana">
+                                            Licencia de Aduana
+                                        </label>
+                                        <input
+                                                                        className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                        name="aduana"
+                                                                        id="aduana"
+                                                                        type="file"
+                                                                        {...register('aduana', { required: true })}
+                                                                    />
+                                                                    {errors.aduana && <p className="text-red-500">La licencia de aduana es requerida</p>}
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-span-1 md:col-span-3 text-center mt-6">
+                                                                <button
+                                                                    type="submit"
+                                                                    className={`bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-gray-700 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                                                    disabled={isLoading}
+                                                                >
+                                                                    {isLoading ? 'Registrando...' : 'Registrar'}
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    
+                                    export default RegistrarConductorPage;
+                                    

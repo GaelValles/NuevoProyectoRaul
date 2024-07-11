@@ -7,3 +7,5 @@ export const getAllCamiones = () => axios.get(`/camiones`);
 export const getCamionRequest= (id) => axios.get(`/camion/${id}`);
 
 export const deleteCamionRequest = (id) => axios.delete(`/camion/${id}/delete`);
+
+export const updateCamionRequest = async (id, camionData) => axios.put(`/camion/${id}/update`, camionData);

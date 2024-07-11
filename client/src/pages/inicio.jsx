@@ -189,6 +189,7 @@ function InicioPage() {
                                 {camionesCategorized.expired.length > 0 ? camionesCategorized.expired.map(camion => (
                                     <div key={camion._id} className="bg-white p-4 rounded shadow-md transition-transform transform hover:scale-105 mb-4">
                                         <h3 className="text-xl font-bold">{camion.marca} {camion.modelo}</h3>
+                                        <p className="text-gray-600">Ultimo maantenimiento: {camion.mantenimiento}</p>
                                         <p className="text-gray-600">Tipo de Mantenimiento: {camion.type}</p>
                                     </div>
                                 )) : (

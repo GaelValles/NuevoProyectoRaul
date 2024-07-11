@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import SidePage from "../components/sidebar";
 import { Document, Page } from 'react-pdf';
-import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
 import doc from '../assets/images/doc.png';
 
@@ -11,11 +10,12 @@ Modal.setAppElement('#root');
 
 function PerfilCajaPage() {
     const { id } = useParams();
-    const { getCajaById, actualizarCaja } = useAuth();
+    const { getCajaById } = useAuth();
     const [caja, setCaja] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchCaja = async () => {
             const cajaData = await getCajaById(id);
@@ -52,11 +52,10 @@ function PerfilCajaPage() {
     const handleLoadError = (error) => {
         console.error('Error al cargar el documento PDF:', error);
     };
-    const handleUpdate =async (idcaja)=>{
-        const res = await actualizarCaja(idcaja)
-        console.log(res)
-        navigate("/updateCaja");
-    }
+
+    const handleUpdate = () => {
+        navigate(`/editarCaja/${id}`);
+    };
 
     const renderDocumentOrPlaceholder = (url) => {
         if (url.endsWith('.pdf')) {

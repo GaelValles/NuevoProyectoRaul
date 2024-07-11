@@ -21,6 +21,10 @@ export const restoreUserRequest = async (id) => {
     }
 };
 
-export const getConductorFilesRequest = async (idconductor) => {
-    return await axios.get(`/conductor/${idconductor}/files`);
-};
+export const getConductorFilesRequest = (idconductor) => axios.get(`/conductor/${idconductor}/files`);
+
+export const updateConductorRequest = (id, formData) => axios.put(`/conductor/${id}/update`, formData, {
+    headers: {
+    'Content-Type': 'multipart/form-data'
+    }
+});

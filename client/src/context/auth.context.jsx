@@ -1,8 +1,8 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest, verifyTokenRequest } from "../api/auth.js";
-import { registerConductor, getAllConductors, getConductorRequest } from "../api/auth.conductor.js";
-import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest } from "../api/auth.permiso.js";
-import { getAllCamiones, registerCamion, getCamionRequest } from "../api/auth.camion.js";
+import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
+import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest } from "../api/auth.permiso.js";
+import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.camion.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 import { getAllCajas, registerCaja, getCajaRequest, updateCajaRequest } from "../api/auth.caja.js";
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (user) => {
         try {
             const res = await loginRequest(user);
-            console.log(res.data)
+            console.log("Esto llegó: ",res.data)
             setIsAuth(true);
             setUser(res.data);
         } catch (error) {
@@ -138,7 +138,60 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const getConductorFiles = async (idconductor) => {
+const editarConductor = async (id, formData) => {
+    try {
+        const response = await updateConductorRequest(id, formData);
+        console.log("Si llegó", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error al actualizar conductor:", error);
+        throw error;
+    }
+};
+
+const editarPermiso = async (id, formData) => {
+    try {
+    let updatedData = {};
+
+    // Recorrer formData y almacenar los valores en updatedData
+    for (const pair of formData.entries()) {
+        updatedData[pair[0]] = pair[1];
+    }
+    console.log("Esto llega: ", updatedData);
+
+        const response = await updatePermisoRequest(id, formData);
+        console.log("Esto envia", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error al actualizar permiso:", error);
+        throw error;
+    }
+};
+
+
+
+
+const editarCaja = async (id, cajaData) => {
+        try {
+            const updatedCaja = await updateCajaRequest(id, cajaData);
+            return updatedCaja;
+        } catch (error) {
+            console.error("Error al actualizar la caja:", error);
+            throw error;
+        }
+};
+
+const editarCamion = async (id, camionData) => {
+        try {
+            const updatedCamion = await updateCamionRequest(id, camionData);
+            return updatedCamion;
+        } catch (error) {
+            console.error("Error al actualizar el camion:", error);
+            throw error;
+        }
+};
+
+const getConductorFiles = async (idconductor) => {
         try {
             const response = await getConductorFilesRequest(idconductor);
             return response.data;
@@ -146,18 +199,17 @@ export const AuthProvider = ({ children }) => {
             console.error("Error al obtener archivos del conductor:", error);
             return [];
         }
-    };
+    
+};
 
-
-
-    useEffect(() => {
+useEffect(() => {
         if (errors.length > 0) {
             const timer = setTimeout(() => {
                 setErrors([]);
             }, 5000);
             return () => clearTimeout(timer);
         }
-    }, [errors]);
+}, [errors]);
 
 
     useEffect(() =>{
@@ -234,6 +286,10 @@ export const AuthProvider = ({ children }) => {
             getPermisos,
             getCamiones,
             getCajas,
+            editarConductor,
+            editarPermiso,
+            editarCamion,
+            editarCaja,
             updateStatus,
             setIsAuth,
             errors,

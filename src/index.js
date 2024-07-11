@@ -2,7 +2,7 @@ import app from './app.js';
 import { connectDB } from './db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import { enviarEmail } from './services/emailService.js';
 async function main() {
   await connectDB();
   app.listen(3000);
@@ -13,6 +13,9 @@ async function main() {
 
   app.set('../client/pages', path.join(__dirname, "pages"));
   app.set('view engine', 'jsx');
+
+  await enviarEmail();
+
 }
 
 main();

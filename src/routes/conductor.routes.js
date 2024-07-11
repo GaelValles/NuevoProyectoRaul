@@ -10,6 +10,7 @@ import {
 } from "../controllers/conductor.controller.js";
 import fileUpload from "express-fileupload";
 
+
 const router = Router();
 
 router.get('/conductores', authRequired, getConductors);

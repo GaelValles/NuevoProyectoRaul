@@ -42,9 +42,26 @@ export const getCaja = async (req, res) => {
 
 //Actualizar datos de la caja
 export const updateCaja = async (req, res) => {
-  const caja = await Caja.findByIdAndUpdate(req.params.id, req.body, {new:true})
-  if (!caja) return res.status(404).json({message: "Caja no encontrada"})
-  res.json(caja)
+  const { id } = req.params;
+  const { placas, numEco, marca, anio, numSerie } = req.body;
+
+  try {
+      const caja = await Caja.findByIdAndUpdate(id, {
+          placas,
+          numEco,
+          marca,
+          anio,
+          numSerie
+      }, { new: true });
+
+      if (!caja) {
+          return res.status(404).json({ message: 'Caja no encontrada' });
+      }
+
+      res.json(caja);
+  } catch (error) {
+      res.status(500).json({ message: 'Error al actualizar la caja', error });
+  }
 };
 
 //Eliminar caja

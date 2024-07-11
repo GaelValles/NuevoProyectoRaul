@@ -8,13 +8,13 @@ import Swal from 'sweetalert2';
 
 
 function LoginPage() {
-    const { login, errors: loginErrors, isAuth } = useAuth();
+    const { login, errors: loginErrors } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
 
-    const onSubmit = handleSubmit((data) => {
-        login(data);
-        if (login(data)) {
+    const onSubmit = handleSubmit((user) => {
+        login(user);
+        if (login(user)) {
             navigate("/Inicio");
             Swal.fire({
               icon: 'success',

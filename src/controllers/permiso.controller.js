@@ -1,7 +1,7 @@
 import Permiso from "../models/permiso.model.js";
 
 import fs from "fs-extra";
-import { uploadFoto } from "../libs/cloudinary.js";
+import { deleteFile, uploadFoto } from "../libs/cloudinary.js";
 //Obtener todos los permisos
 export const getPermisos = async (req, res) => {
     try {
@@ -59,24 +59,55 @@ export const getPermiso = async (req, res) => {
     }
 };
 
-//actualizar un permiso por id
-export const updatePermiso = async (req, res) => {
-    try {
-      const permiso = await Permiso.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-      });
-  
-      if (!permiso)
-        return res.status(404).json({ message: "Permiso no encontrado" });
-      res.json(permiso);
-    } catch (error) {
-      return res.status(500).json({
-        message: "Error al actualizar el permiso",
-        error,
-      });
+export const updatePermiso = async (req, res, next) => {
+  try {
+    const permisoActual = await Permiso.findById(req.params.id);
+
+    if (!permisoActual) {
+      return res.status(404).json({ message: 'Permiso no encontrado' });
     }
+
+    const { titulo, fechaFinal, descripcion, avisoAntelacion } = req.body;
+    const data = {
+      titulo,
+      fechaFinal,
+      descripcion,
+      avisoAntelacion,
+    };
+
+    console.log("Este es el permiso original", permisoActual);
+    console.log("Datos recibidos:", data);
+
+    if (req.files && req.files.foto) {
+      const imgId = permisoActual.foto?.public_id;
+      if (imgId) {
+        await deleteFile(imgId);
+      }
+
+      const newImage = await uploadFoto(req.files.foto.tempFilePath);
+      data.foto = {
+        public_id: newImage.public_id,
+        secure_url: newImage.secure_url
+      };
+
+      await fs.unlink(req.files.foto.tempFilePath); // Eliminar el archivo temporal
+    }
+
+    console.log("Datos que se van a actualizar:", data);
+
+    const permisoUpdated = await Permiso.findByIdAndUpdate(req.params.id, data, { new: true });
+
+    return res.status(200).json(permisoUpdated);
+
+  } catch (error) {
+    console.error("Error al actualizar el permiso:", error);
+    res.status(500).json({
+      message: "Error al actualizar el permiso",
+      error,
+    });
+    next(error);
+  }
 };
-  
   //Eliminar un permiso por id
   export const deletePermiso = async (req, res) => {
     try {

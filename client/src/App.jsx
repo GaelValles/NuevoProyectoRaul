@@ -21,6 +21,10 @@ import PerfilPermisoPage from './pages/perfilPermiso.jsx';
 import PerfilCamionPage from './pages/perfilCamion.jsx';
 import PerfilCajaPage from './pages/perfilCaja.jsx';
 
+import EditarConductorPage from './pages/editarConductor.jsx';
+import EditarPermisoPage from './pages/editarPermiso.jsx';
+import EditarCamionPage from './pages/editarCamion.jsx';
+import EditarCajaPage from './pages/editarCaja.jsx';
 
 function App(){
   return (
@@ -42,13 +46,18 @@ function App(){
           <Route path='/perfilPermiso/:id' element={< PerfilPermisoPage />}/>
           <Route path='/perfilCamion/:id' element={< PerfilCamionPage />}/>
           <Route path='/perfilCaja/:id' element={< PerfilCajaPage />}/>
-
+          <Route path='/perfil' element={<PerfilPage/>}/>
+          
           <Route path='/registrarPermiso' element={<RegistrarPermisoPage />}/>
           <Route path='/registrarCamion' element={<RegistrarCamionPage />}/>
           <Route path='/registrar' element={ <RegistrarConductorPage />}/>
           <Route path='/registrarCaja' element={<RegistrarCajaPage />}/>
-
-          <Route path='/perfil' element={<PerfilPage/>}/>
+          
+          <Route path='/editarConductor/:id' element={<EditarConductorPage />}/>
+          <Route path='/editarPermiso/:id' element={<EditarPermisoPage />}/>
+          <Route path='/editarCamion/:id' element={<EditarCamionPage />}/>
+          <Route path='/editarCaja/:id' element={<EditarCajaPage />}/>
+          
         </Route>
       </Routes>
     </BrowserRouter>

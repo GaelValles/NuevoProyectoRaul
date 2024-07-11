@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
-import { getCajas, postCajas, getCaja, updateCaja, deleteCaja } from "../controllers/caja.controller.js";
+import { getCajas, postCajas, getCaja, deleteCaja, updateCaja } from "../controllers/caja.controller.js";
 
 const router = Router();
 

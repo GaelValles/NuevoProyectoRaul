@@ -5,12 +5,14 @@ import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { deleteConductorRequest } from "../api/auth.conductor";
 
 function ConductoresPage() {
     const { user, getConductors, getConductorFiles } = useAuth();
     const [conductores, setConductores] = useState([]);
     const [selectedConductores, setSelectedConductores] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isDownloading, setIsDownloading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -103,6 +105,7 @@ function ConductoresPage() {
             cancelButtonText: 'Cancelar'
         }).then(async (result) => {
             if (result.isConfirmed) {
+                setIsDownloading(true);
                 try {
                     const zip = new JSZip();
 
@@ -130,6 +133,8 @@ function ConductoresPage() {
                         'Ocurrió un error al intentar descargar los archivos de los conductores seleccionados.',
                         'error'
                     );
+                } finally {
+                    setIsDownloading(false);
                 }
             }
         });
@@ -162,7 +167,9 @@ function ConductoresPage() {
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <button onClick={handleDownload} className="bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2">Descargar</button>
+                        <button onClick={handleDownload} className={`bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2 ${isDownloading ? 'cursor-not-allowed' : ''}`} disabled={isDownloading}>
+                            {isDownloading ? 'Descargando...' : 'Descargar'}
+                        </button>
                         <Link to= "/registrar" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
                         <button onClick={handleDelete} className="bi bi-trash flex items-center bg-red-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-red-600 mr-2"> Eliminar</button>
                     </div>

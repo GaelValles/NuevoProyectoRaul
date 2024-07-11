@@ -41,9 +41,29 @@ export const getCamion = async (req, res) => {
 
 //Actualizar datos del camion
 export const updateCamion = async (req, res) => {
-  const camion = await Camion.findByIdAndUpdate(req.params.id, req.body, {new:true})
-  if (!camion) return res.status(404).json({message: "Camion no encontrado"})
-  res.json(camion)
+  const { id } = req.params;
+  const {  marca, modelo, color, placasMx, placasUsa, numEco, numSerie, mantenimiento } = req.body;
+
+  try {
+      const camion = await Camion.findByIdAndUpdate(id, {
+        marca,
+        modelo,
+        color,
+        placasMx, 
+        placasUsa,
+        numEco,
+        numSerie,
+        mantenimiento
+      }, { new: true });
+
+      if (!camion) {
+          return res.status(404).json({ message: 'camion no encontrada' });
+      }
+
+      res.json(camion);
+  } catch (error) {
+      res.status(500).json({ message: 'Error al actualizar el camion', error });
+  }
 };
 
 //Eliminar camion

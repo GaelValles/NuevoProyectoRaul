@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useAuth } from "../context/auth.context";
 import SidePage from "../components/sidebar";
 import { Document, Page } from 'react-pdf';
@@ -14,7 +14,7 @@ function PerfilPermisoPage() {
     const [permiso, setPermiso] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
-
+    const navigate = useNavigate()
     useEffect(() => {
         const fetchPermiso = async () => {
             const permisoData = await getPermisoById(id);
@@ -52,6 +52,10 @@ function PerfilPermisoPage() {
         console.error('Error al cargar el documento PDF:', error);
     };
 
+    const handleUpdate = () => {
+        navigate(`/editarPermiso/${id}`);
+    };
+
     const renderDocumentOrPlaceholder = (url) => {
         if (url.endsWith('.pdf')) {
             return renderDocument(url);
@@ -85,7 +89,7 @@ function PerfilPermisoPage() {
                 <div className="flex justify-between items-center mb-4">
                     <h1 className="text-4xl text-black">Perfil del Permiso</h1>
                     <button 
-                        onClick={() => window.location.reload()}
+                        onClick={handleUpdate}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
                     >
                         Actualizar
