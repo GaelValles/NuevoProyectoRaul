@@ -30,23 +30,29 @@ export const enviarEmail = async () => {
     const enviarCorreosConPermisos = async () => {
       const usuarios = await User.find({}, 'email');
       for (const usuario of usuarios) {
-        const permisos = await Permiso.find({ user: usuario._id }, 'titulo');
+        const permisos = await Permiso.find({ user: usuario._id }, 'titulo fechaFinal descripcion avisoAntelacion status');
         console.log(`Usuario: ${usuario.email}`);
         
         if (permisos.length > 0) {
+          const fechaActual = new Date();
           for (const permiso of permisos) {
-            const mailOptions = {
-              from: '"Alertas y Control de Datos" <alertasycontroldedatos@gmail.com>',
-              to: usuario.email,
-              subject: 'Información del Permiso',
-              text: `Hola, tienes un nuevo permiso titulado: ${permiso.titulo}`,
-            };
+            const { titulo, fechaFinal, descripcion, avisoAntelacion } = permiso;
+            if (fechaActual >= new Date(avisoAntelacion) && fechaActual <= new Date(fechaFinal)) {
+              const mailOptions = {
+                from: '"Alertas y Control de Datos" <alertasycontroldedatos@gmail.com>',
+                to: usuario.email,
+                subject: `Actualizar ${titulo}`,
+                text: `Hola, tienes un nuevo permiso titulado: ${titulo}\nDescripción: ${descripcion}`,
+              };
 
-            try {
-              await transporter.sendMail(mailOptions);
-              console.log(`Correo enviado a ${usuario.email} con el permiso: ${permiso.titulo}`);
-            } catch (error) {
-              console.error(`Error al enviar correo a ${usuario.email}:`, error);
+              try {
+                await transporter.sendMail(mailOptions);
+                console.log(`Correo enviado a ${usuario.email} con el permiso: ${titulo}`);
+              } catch (error) {
+                console.error(`Error al enviar correo a ${usuario.email}:`, error);
+              }
+            } else {
+              console.log(`Permiso ${titulo} de ${usuario.email} no está dentro del rango de fechas para envío.`);
             }
           }
         } else {
@@ -56,7 +62,7 @@ export const enviarEmail = async () => {
     };
 
     // Programar la tarea cron
-    cron.schedule('0 * * * *', async () => { // Cambiado a cada hora
+    cron.schedule('0 9 */4 * *', async () => { // se ejecuta cada 4 dias a las 9:00am
       console.log("Ejecutando cron");
       await enviarCorreosConPermisos();
     });
