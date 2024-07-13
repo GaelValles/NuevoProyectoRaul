@@ -1,7 +1,13 @@
 import Permiso from "../models/permiso.model.js";
-
+import { v2 as cloudinary } from "cloudinary";
 import fs from "fs-extra";
 import { deleteFile, uploadFoto } from "../libs/cloudinary.js";
+cloudinary.config({
+  cloud_name: "dftu2fjzj",
+  api_key: "946929268796721",
+  api_secret: "mQ0AiZEdxcmd7RLyhOB2KclWHQA",
+  secured: true,
+});
 //Obtener todos los permisos
 export const getPermisos = async (req, res) => {
     try {
@@ -12,6 +18,31 @@ export const getPermisos = async (req, res) => {
         message: "Error al obtener los permisos",
         error,
       });
+    }
+  };
+  
+  export const getPermisoFile = async (req, res) => {
+    try {
+      const permiso = await Permiso.findById(req.params.id);
+      if (!permiso) {
+        return res.status(404).json({ message: 'Permiso no encontrado.' });
+      }
+  
+      if (!permiso.foto || !permiso.foto.public_id) {
+        return res.status(404).json({ message: 'Archivo no encontrado.' });
+      }
+  
+      const resource = await cloudinary.api.resource(permiso.foto.public_id);
+      const fileData = {
+        name: permiso.titulo,
+        url: resource.secure_url,
+        format: resource.format
+      };
+  
+      res.json(fileData);
+    } catch (error) {
+      console.error("Error al obtener archivo del permiso:", error);
+      res.status(500).json({ message: 'Error al obtener archivo del permiso.' });
     }
   };
 

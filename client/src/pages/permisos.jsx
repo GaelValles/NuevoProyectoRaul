@@ -3,13 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import axios from 'axios';
 import { deletePermisoRequest } from "../api/auth.permiso";
 
 function PermisosPage() {
-    const { user, getPermisos } = useAuth();
+    const { user, getPermisos, getPermisoFile } = useAuth();
     const [permisos, setPermisos] = useState([]);
     const [selectedPermisos, setSelectedPermisos] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isDownloading, setIsDownloading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -66,6 +70,64 @@ function PermisosPage() {
         });
     };
 
+    const handleDownload = async () => {
+        if (selectedPermisos.length === 0) {
+          Swal.fire({
+            title: 'Atención',
+            text: 'Debes seleccionar al menos un permiso para descargar su archivo.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+          });
+          return;
+        }
+      
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: "Se descargarán los archivos de los permisos seleccionados",
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, descargar',
+          cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            setIsDownloading(true);
+            try {
+              const zip = new JSZip();
+      
+              await Promise.all(selectedPermisos.map(async (idpermiso) => {
+                const file = await getPermisoFile(idpermiso);
+                if (file) {
+                  const response = await axios.get(file.url, {
+                    responseType: 'arraybuffer'
+                  });
+                  zip.file(`${file.name}.${file.format}`, response.data);
+                }
+              }));
+      
+              const content = await zip.generateAsync({ type: 'blob' });
+              saveAs(content, 'permisos_archivos.zip');
+      
+              Swal.fire(
+                'Descargados!',
+                'Los archivos de los permisos seleccionados han sido descargados.',
+                'success'
+              );
+            } catch (error) {
+              console.error("Error al descargar archivos de los permisos:", error);
+              Swal.fire(
+                'Error!',
+                'Ocurrió un error al intentar descargar los archivos de los permisos seleccionados.',
+                'error'
+              );
+            } finally {
+              setIsDownloading(false);
+            }
+          }
+        });
+      };
+
     const handleCheckboxChange = (idpermiso) => {
         setSelectedPermisos(prevSelected => {
             if (prevSelected.includes(idpermiso)) {
@@ -105,6 +167,9 @@ function PermisosPage() {
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
+                    <button onClick={handleDownload} className={`bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2 ${isDownloading ? 'cursor-not-allowed' : ''}`} disabled={isDownloading}>
+                            {isDownloading ? 'Descargando...' : 'Descargar'}
+                        </button>
                         <Link to= "/registrarPermiso" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
                         <button onClick={handleDelete} className="bi bi-trash flex items-center bg-red-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-red-600 mr-2"> Eliminar</button>
                     </div>

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest, verifyTokenRequest, logoutRequest, getUsuarioRequest, updateUsuarioRequest } from "../api/auth.js";
 import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
-import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest } from "../api/auth.permiso.js";
+import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest, getPermisoFileRequest } from "../api/auth.permiso.js";
 import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.camion.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
@@ -242,6 +242,15 @@ const getConductorFiles = async (idconductor) => {
         }
     
 };
+const getPermisoFile = async (idpermiso) => {
+    try {
+      const response = await getPermisoFileRequest(idpermiso);
+      return response.data;
+    } catch (error) {
+      console.error("Error al obtener archivo del permiso:", error);
+      return null;
+    }
+  };
 
 useEffect(() => {
         if (errors.length > 0) {
@@ -292,6 +301,7 @@ useEffect(() => {
             registrarCaja,
             getConductorById,
             getConductorFiles,
+            getPermisoFile,
             getPermisoById,
             getUsuarioById,
             getCamionById,
