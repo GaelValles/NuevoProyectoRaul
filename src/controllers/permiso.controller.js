@@ -108,6 +108,7 @@ export const updatePermiso = async (req, res, next) => {
     next(error);
   }
 };
+
   //Eliminar un permiso por id
   export const deletePermiso = async (req, res) => {
     try {

@@ -23,8 +23,12 @@ export const restoreUserRequest = async (id) => {
 
 export const getConductorFilesRequest = (idconductor) => axios.get(`/conductor/${idconductor}/files`);
 
-export const updateConductorRequest = (id, formData) => axios.put(`/conductor/${id}/update`, formData, {
-    headers: {
-    'Content-Type': 'multipart/form-data'
-    }
-});
+export const updateConductorRequest = (id, formData) => {
+    console.log("Datos enviados al backend:", formData);
+    return axios.put(`/conductor/${id}/update`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+};
+

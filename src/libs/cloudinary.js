@@ -48,8 +48,8 @@ cloudinary.config({
     });
     }
 
-    export async function uploadAduana(filePath) {
-    return await cloudinary.uploader.upload(filePath, { folder: "lugaAduana" });
+    export async function uploadEscuela(filePath) {
+    return await cloudinary.uploader.upload(filePath, { folder: "lugaEscuela" });
     }
 
     //Eliminar archivos

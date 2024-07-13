@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { loginRequest, verifyTokenRequest, logoutRequest } from "../api/auth.js";
+import { loginRequest, verifyTokenRequest, logoutRequest, getUsuarioRequest, updateUsuarioRequest } from "../api/auth.js";
 import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
 import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest } from "../api/auth.permiso.js";
 import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.camion.js";
@@ -67,6 +67,14 @@ export const AuthProvider = ({ children }) => {
         return response.data;
     };
 
+    const getUsuarioById = async (id) => {
+        try {
+            const res = await getUsuarioRequest(id);
+            return res.data;
+        } catch (error) {
+            console.error(error);
+        }
+    };
     const getConductorById = async (id) => {
         try {
             const res = await getConductorRequest(id);
@@ -145,16 +153,24 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-const editarConductor = async (id, formData) => {
-    try {
-        const response = await updateConductorRequest(id, formData);
-        console.log("Si llegó", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Error al actualizar conductor:", error);
-        throw error;
-    }
-};
+    const editarConductor = async (id, formData) => {
+        try {
+            let updatedData = {};
+    
+            // Recorrer formData y almacenar los valores en updatedData
+            for (const pair of formData.entries()) {
+                updatedData[pair[0]] = pair[1];
+            }
+            console.log("Esto llega: ", updatedData);
+            formData=updatedData;
+            const response = await updateConductorRequest(id, formData);
+            console.log("Esto envía", response.data);
+            return response.data;
+        } catch (error) {
+            console.error("Error al actualizar conductor:", error);
+            throw error;
+        }
+    };
 
 const editarPermiso = async (id, formData) => {
     try {
@@ -175,6 +191,24 @@ const editarPermiso = async (id, formData) => {
     }
 };
 
+const editarUsuario = async (id, formData) => {
+    try {
+    let updatedData = {};
+
+    // Recorrer formData y almacenar los valores en updatedData
+    for (const pair of formData.entries()) {
+        updatedData[pair[0]] = pair[1];
+    }
+    console.log("Esto llega: ", updatedData);
+
+        const response = await updateUsuarioRequest(id, formData);
+        console.log("Esto envia", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error al actualizar usuario:", error);
+        throw error;
+    }
+};
 
 
 
@@ -248,34 +282,6 @@ useEffect(() => {
         checkLogin();
     },[])
 
-    // useEffect(() => {
-    //     async function checkLogin() {
-    //         const token = Cookies.get('token');
-    //         if (!token) {
-    //             setIsAuth(false);
-    //             setUser(null);
-    //             setLoading(false);
-    //             return;
-    //         }
-    //         try {
-    //             const res = await verifyTokenRequest();
-    //             if (!res) {
-    //                 setIsAuth(false);
-    //                 setUser(null);
-    //             } else {
-    //                 setIsAuth(true);
-    //                 setUser(res);
-    //             }
-    //         } catch (error) {
-    //             setIsAuth(false);
-    //             setUser(null);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     }
-    //     checkLogin();
-    // }, []);
-
     return (
         <AuthContext.Provider value={{
             login,
@@ -287,6 +293,7 @@ useEffect(() => {
             getConductorById,
             getConductorFiles,
             getPermisoById,
+            getUsuarioById,
             getCamionById,
             getCajaById,
             getConductors,
@@ -294,6 +301,7 @@ useEffect(() => {
             getCamiones,
             getCajas,
             editarConductor,
+            editarUsuario,
             editarPermiso,
             editarCamion,
             editarCaja,

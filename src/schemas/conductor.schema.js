@@ -38,5 +38,5 @@ export const registerSchema = z.object({
   fast: fileValidation,
   domicilio: fileValidation,
   psicofisico: fileValidation,
-  aduana: fileValidation,
+  escuela: fileValidation,
 });

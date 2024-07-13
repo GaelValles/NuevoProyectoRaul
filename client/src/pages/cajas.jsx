@@ -98,7 +98,7 @@ return (
                             placeholder="Buscar..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="border-l-transparent border-blue-500 border-r-transparent border-t-transparent border-b-2 border-solid mt-3 mr-2"
+                            className="border-l-transparent border-gray-800 border-r-transparent border-t-transparent border-b-2 border-solid mt-3 mr-2"
                             style={{ width: '400px' }}
                         />
                         <button className="text-gray-500">

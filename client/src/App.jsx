@@ -10,6 +10,7 @@ import RegistrarCajaPage from './pages/registrarCaja.jsx';
 
 import InicioPage from './pages/inicio';
 import PerfilPage from './pages/perfil';
+import EditarUsuarioPage from './pages/editarUsuario.jsx';
 
 import ConductoresPage from './pages/conductores.jsx';
 import PermisosPage from './pages/permisos.jsx';
@@ -36,6 +37,7 @@ function App(){
         <Route element={<ProtectedRoute />}>
           
           <Route path='/inicio' element={ < InicioPage />}/>        
+          <Route path='/editarUsuario/:id' element={<EditarUsuarioPage />}/>
 
           <Route path='/conductores' element={< ConductoresPage />}/>
           <Route path='/permisos' element={< PermisosPage />}/>
@@ -57,6 +59,7 @@ function App(){
           <Route path='/editarPermiso/:id' element={<EditarPermisoPage />}/>
           <Route path='/editarCamion/:id' element={<EditarCamionPage />}/>
           <Route path='/editarCaja/:id' element={<EditarCajaPage />}/>
+          
           
         </Route>
       </Routes>

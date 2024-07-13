@@ -52,75 +52,83 @@ function EditarCajaPage() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex min-h-screen bg-gray-100">
             <Sidepage />
-            <div className="w-full max-w-3xl">
-                <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl hover:shadow-gray-500 transition duration-300 ease-in-out">
-                    <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Actualizar caja</h1>
-                    <Link to="/cajas" className="bi bi-arrow-left flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2"></Link>
-                    <form onSubmit={onSubmit} className="mt-4 grid grid-cols-1 gap-4">
-                        <div>
-                            <div className="mb-4">
+            <div className="flex flex-col flex-1 justify-center items-center p-4 lg:ml-[300px]">
+                <div className="w-full max-w-3xl">
+                    <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
+                        <div className="flex justify-between items-center mb-6">
+                            <h1 className="text-2xl text-gray-800 font-semibold">Actualizar caja</h1>
+                            <Link to="/cajas" className="text-blue-500 hover:text-blue-700 transition duration-300">
+                                <i className="bi bi-arrow-left"></i> Volver
+                            </Link>
+                        </div>
+                        <form onSubmit={onSubmit} className="space-y-4">
+                            <div>
                                 <input
-                                    className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
                                     id="placas"
                                     type="text"
                                     placeholder="Placas de la caja"
                                     {...register('placas', { required: true })}
                                 />
                             </div>
-                                    <div className="mb-4">
-                                        <input
-                                            className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                            id="numEco"
-                                            type="text"
-                                            placeholder="Número de eco"
-                                            {...register('numEco', { required: true })}
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <input
-                                            className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                            id="marca"
-                                            type="text"
-                                            placeholder="marca"
-                                            {...register('marca', { required: true })}
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <input
-                                            className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                            id="anio"
-                                            type="number"
-                                            placeholder="Año"
-                                            {...register('anio', { required: true })}
-                                        />
-                                    </div>
-                                    <div className="mb-4">
-                                        <input
-                                            className="border-b-2 border-t-0 border-l-0 border-r-0 border-solid border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                            id="numSerie"
-                                            type="text"
-                                            placeholder="Número de serie"
-                                            {...register('numSerie', { required: true })}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-span-full md:col-span-2 flex justify-center">
-                                    <button
-                                        type="submit"
-                                        id="botonIngresar"
-                                        className="rounded-full bg-gray-700 hover:bg-gray-900 text-white font-semibold py-2 px-4 w-full md:w-1/2 mt-4 transition duration-300 ease-in-out"
-                                    >
-                                        Actualizar
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            <div>
+                                <input
+                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                    id="numEco"
+                                    type="text"
+                                    placeholder="Número de eco"
+                                    {...register('numEco', { required: true })}
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                    id="marca"
+                                    type="text"
+                                    placeholder="Marca"
+                                    {...register('marca', { required: true })}
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                    id="anio"
+                                    type="number"
+                                    placeholder="Año"
+                                    {...register('anio', { required: true })}
+                                />
+                            </div>
+                            <div>
+                                <input
+                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                    id="numSerie"
+                                    type="text"
+                                    placeholder="Número de serie"
+                                    {...register('numSerie', { required: true })}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <button
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                    type="submit"
+                                >
+                                    Actualizar
+                                </button>
+                                <Link
+                                    to="/cajas"
+                                    className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                                >
+                                    Cancelar
+                                </Link>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            );
-        }
-        
-        export default EditarCajaPage;
-        
+            </div>
+        </div>
+    );
+}
+
+export default EditarCajaPage;

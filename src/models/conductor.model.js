@@ -60,7 +60,7 @@ const conductorSchema = new mongoose.Schema(
             public_id: String,
             secure_url: String,
         },
-        aduana: {
+        escuela: {
             public_id: String,
             secure_url: String,
         },

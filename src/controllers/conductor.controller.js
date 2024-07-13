@@ -1,4 +1,6 @@
 import Conductor from "../models/conductor.model.js";
+import JSZip from "jszip";
+import axios from "axios";
 import { v2 as cloudinary } from "cloudinary";
 import {
   uploadSolicitud,
@@ -9,13 +11,19 @@ import {
   uploadAntecedentes,
   uploadDomicilio,
   uploadPsicofisico,
-  uploadAduana,
+  uploadEscuela,
   deleteFile,
   download
 } from "../libs/cloudinary.js";
 import fs from "fs-extra";
 import asyncHandler from 'express-async-handler';
 
+cloudinary.config({
+  cloud_name: "dftu2fjzj",
+  api_key: "946929268796721",
+  api_secret: "mQ0AiZEdxcmd7RLyhOB2KclWHQA",
+  secured: true,
+});
 
 // Función auxiliar para subir archivos
 const uploadFile = async (file, uploadFunction) => {
@@ -52,7 +60,7 @@ export const postConductores = async (req, res) => {
       antecedentes: uploadAntecedentes,
       domicilio: uploadDomicilio,
       psicofisico: uploadPsicofisico,
-      aduana: uploadAduana,
+      escuela: uploadEscuela,
     };
 
     for (const [key, uploadFunction] of Object.entries(fileUploads)) {
@@ -95,59 +103,67 @@ export const deleteConductor = async (req, res) => {
 };
 
 // Actualizar un conductor por id
-export const updateConductor = asyncHandler(async (req, res) => {
-  const conductor = await Conductor.findById(req.params.id);
+export const updateConductor = async (req, res, next) => {
+  try {
+      const conductorActual = await Conductor.findById(req.params.id);
 
-  if (!conductor) {
-    res.status(404);
-    throw new Error('Conductor no encontrado');
-  }
-
-  conductor.nombre = req.body.nombre || conductor.nombre;
-  conductor.fechaNacimiento = req.body.fechaNacimiento || conductor.fechaNacimiento;
-  conductor.numLicencia = req.body.numLicencia || conductor.numLicencia;
-  conductor.numVisa = req.body.numVisa || conductor.numVisa;
-  conductor.numGafete = req.body.numGafete || conductor.numGafete;
-
-  const fileKeys = [
-    'solicitud',
-    'ine',
-    'visa',
-    'fast',
-    'antidoping',
-    'antecedentes',
-    'domicilio',
-    'psicofisico',
-    'aduana'
-  ];
-
-  for (const key of fileKeys) {
-    if (req.files?.[key]) {
-      if (conductor[key]?.public_id) {
-        await deleteFile(conductor[key].public_id);
+      if (!conductorActual) {
+          return res.status(404).json({ message: 'Conductor no encontrado' });
       }
-      const uploadedFile = await uploadFile(req.files[key], {
-        solicitud: uploadSolicitud,
-        ine: uploadIne,
-        visa: uploadVisa,
-        fast: uploadFast,
-        antidoping: uploadAntidoping,
-        antecedentes: uploadAntecedentes,
-        domicilio: uploadDomicilio,
-        psicofisico: uploadPsicofisico,
-        aduana: uploadAduana,
-      }[key]);
-      conductor[key] = {
-        public_id: uploadedFile.public_id,
-        secure_url: uploadedFile.secure_url
+
+      const { nombre, fechaNacimiento, numLicencia, numVisa, numGafete } = req.body;
+      const data = {
+          nombre,
+          fechaNacimiento,
+          numLicencia,
+          numVisa,
+          numGafete
       };
-    }
+      console.log("Esto llega",data)
+      
+      const fileUploads = {
+          solicitud: uploadSolicitud,
+          ine: uploadIne,
+          visa: uploadVisa,
+          fast: uploadFast,
+          antidoping: uploadAntidoping,
+          antecedentes: uploadAntecedentes,
+          domicilio: uploadDomicilio,
+          psicofisico: uploadPsicofisico,
+          escuela: uploadEscuela,
+      };
+
+      for (const [key, uploadFunction] of Object.entries(fileUploads)) {
+          if (req.files && req.files[key]) {
+              const imgId = conductorActual[key]?.public_id;
+              if (imgId) {
+                  await deleteFile(imgId);
+              }
+
+              const newImage = await uploadFunction(req.files[key].tempFilePath);
+              data[key] = {
+                  public_id: newImage.public_id,
+                  secure_url: newImage.secure_url
+              };
+
+              await fs.unlink(req.files[key].tempFilePath); // Eliminar el archivo temporal
+          }
+      }
+      console.log(data)
+
+      const conductorUpdated = await Conductor.findByIdAndUpdate(req.params.id, data, { new: true });
+
+      return res.status(200).json(conductorUpdated);
+
+  } catch (error) {
+      console.error("Error al actualizar el conductor:", error);
+      res.status(500).json({
+          message: "Error al actualizar el conductor",
+          error,
+      });
+      next(error);
   }
-
-  const updatedConductor = await conductor.save();
-  res.json(updatedConductor);
-});
-
+};
 // Eliminar un conductor por id
 export const deleteConductores = async (req, res) => {
   try {
@@ -166,7 +182,7 @@ export const deleteConductores = async (req, res) => {
       "antecedentes",
       "domicilio",
       "psicofisico",
-      "aduana",
+      "escuela",
     ];
 
     for (const field of fileFields) {
@@ -186,37 +202,39 @@ export const deleteConductores = async (req, res) => {
 
 export const getConductorFiles = async (req, res) => {
   try {
-      const conductor = await Conductor.findById(req.params.id);
-      if (!conductor) {
-          return res.status(404).json({ message: 'Conductor no encontrado.' });
+    const conductor = await Conductor.findById(req.params.id);
+    if (!conductor) {
+      return res.status(404).json({ message: 'Conductor no encontrado.' });
+    }
+
+    const files = [
+      { name: 'solicitud', public_id: conductor.solicitud.public_id },
+      { name: 'ine', public_id: conductor.ine.public_id },
+      { name: 'visa', public_id: conductor.visa.public_id },
+      { name: 'fast', public_id: conductor.fast.public_id },
+      { name: 'antidoping', public_id: conductor.antidoping.public_id },
+      { name: 'antecedentes', public_id: conductor.antecedentes.public_id },
+      { name: 'domicilio', public_id: conductor.domicilio.public_id },
+      { name: 'psicofisico', public_id: conductor.psicofisico.public_id },
+      { name: 'escuela', public_id: conductor.escuela.public_id }
+    ];
+
+    const fileData = await Promise.all(files.map(async file => {
+      if (file.public_id) {
+        const resource = await cloudinary.api.resource(file.public_id);
+        return {
+          name: file.name,
+          url: resource.secure_url,
+          format: resource.format
+        };
       }
+      return null;
+    }));
 
-      const files = [
-          { name: 'solicitud', path: conductor.solicitud.secure_url },
-          { name: 'ine', path: conductor.ine.secure_url },
-          { name: 'visa', path: conductor.visa.secure_url },
-          { name: 'fast', path: conductor.fast.secure_url },
-          { name: 'antidoping', path: conductor.antidoping.secure_url },
-          { name: 'antecedentes', path: conductor.antecedentes.secure_url },
-          { name: 'domicilio', path: conductor.domicilio.secure_url },
-          { name: 'psicofisico', path: conductor.psicofisico.secure_url },
-          { name: 'aduana', path: conductor.aduana.secure_url }
-      ];
-      console.log(files)
-      const fileData = await Promise.all(files.map(async file => {
-          if (file.path) {
-              const url = cloudinary.url(file.path);
-              
-              return { name: file.name, url };
-          }
-          return null;
-      }));
-
-      const filteredFileData = fileData.filter(file => file !== null);
-
-      res.json(filteredFileData);
+    const filteredFileData = fileData.filter(file => file !== null);
+    res.json(filteredFileData);
   } catch (error) {
-      console.error("Error al obtener archivos del conductor:", error);
-      res.status(500).json({ message: 'Error al obtener archivos del conductor.' });
+    console.error("Error al obtener archivos del conductor:", error);
+    res.status(500).json({ message: 'Error al obtener archivos del conductor.' });
   }
 };

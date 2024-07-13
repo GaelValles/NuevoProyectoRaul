@@ -17,7 +17,8 @@ router.get('/conductores', authRequired, getConductors);
 router.get('/conductor/:id', authRequired, getConductor);
 router.post("/conductor", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postConductores);
 router.delete('/conductor/:id/delete', authRequired, deleteConductores);
-router.put('/conductor/:id/update', authRequired, updateConductor);
+
+router.put("/conductor/:id/update", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), updateConductor);
 router.get('/conductor/:id/files', authRequired, getConductorFiles);
 
 export default router;

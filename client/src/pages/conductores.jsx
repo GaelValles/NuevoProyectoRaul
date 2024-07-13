@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import SidePage from "../components/sidebar";
 import { useAuth } from "../context/auth.context";
 import Swal from 'sweetalert2';
+import axios from 'axios';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { deleteConductorRequest } from "../api/auth.conductor";
@@ -85,60 +86,63 @@ function ConductoresPage() {
 
     const handleDownload = async () => {
         if (selectedConductores.length === 0) {
-            Swal.fire({
-                title: 'Atención',
-                text: 'Debes seleccionar al menos un conductor para descargar sus archivos.',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-            });
-            return;
+          Swal.fire({
+            title: 'Atención',
+            text: 'Debes seleccionar al menos un conductor para descargar sus archivos.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+          });
+          return;
         }
-
+      
         Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Se descargarán los archivos de los conductores seleccionados",
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, descargar',
-            cancelButtonText: 'Cancelar'
+          title: '¿Estás seguro?',
+          text: "Se descargarán los archivos de los conductores seleccionados",
+          icon: 'info',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Sí, descargar',
+          cancelButtonText: 'Cancelar'
         }).then(async (result) => {
-            if (result.isConfirmed) {
-                setIsDownloading(true);
-                try {
-                    const zip = new JSZip();
-
-                    await Promise.all(selectedConductores.map(async (idconductor) => {
-                        const files = await getConductorFiles(idconductor);
-                        const folder = zip.folder(`conductor_${idconductor}`);
-
-                        files.forEach(file => {
-                            folder.file(file.name, file.data, { base64: true });
-                        });
-                    }));
-
-                    const content = await zip.generateAsync({ type: 'blob' });
-                    saveAs(content, 'conductores_archivos.zip');
-
-                    Swal.fire(
-                        'Descargados!',
-                        'Los archivos de los conductores seleccionados han sido descargados.',
-                        'success'
-                    );
-                } catch (error) {
-                    console.error("Error al descargar archivos de los conductores:", error);
-                    Swal.fire(
-                        'Error!',
-                        'Ocurrió un error al intentar descargar los archivos de los conductores seleccionados.',
-                        'error'
-                    );
-                } finally {
-                    setIsDownloading(false);
-                }
+          if (result.isConfirmed) {
+            setIsDownloading(true);
+            try {
+              const zip = new JSZip();
+      
+              await Promise.all(selectedConductores.map(async (idconductor) => {
+                const files = await getConductorFiles(idconductor);
+                const folder = zip.folder(`conductor_${idconductor}`);
+      
+                await Promise.all(files.map(async file => {
+                  const response = await axios.get(file.url, {
+                    responseType: 'arraybuffer'
+                  });
+                  folder.file(`${file.name}.${file.format}`, response.data);
+                }));
+              }));
+      
+              const content = await zip.generateAsync({ type: 'blob' });
+              saveAs(content, 'conductores_archivos.zip');
+      
+              Swal.fire(
+                'Descargados!',
+                'Los archivos de los conductores seleccionados han sido descargados.',
+                'success'
+              );
+            } catch (error) {
+              console.error("Error al descargar archivos de los conductores:", error);
+              Swal.fire(
+                'Error!',
+                'Ocurrió un error al intentar descargar los archivos de los conductores seleccionados.',
+                'error'
+              );
+            } finally {
+              setIsDownloading(false);
             }
+          }
         });
-    };
+      };
 
     const filteredConductores = conductores.filter((conductor) =>
         conductor.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||

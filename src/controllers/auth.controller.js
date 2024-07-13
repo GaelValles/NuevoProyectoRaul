@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { TOKEN_SECRET  } from "../config.js";
 import {createAccessToken} from '../libs/jwt.js'
 import fs from 'fs-extra';
-import { uploadPerfil } from "../libs/cloudinary.js";
+import { uploadPerfil, deleteFile } from "../libs/cloudinary.js";
 
 export const registrar = async (req, res) => {
   const { nombreCompleto, email, telefono, password } = req.body;
@@ -50,6 +50,22 @@ export const registrar = async (req, res) => {
     }
   };
 
+
+//Obtener solo un usuario por id
+export const getUsuario = async (req, res) => {
+  try {
+    const usuario = await User.findById(req.params.id);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    res.json(usuario);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al obtener el usuario",
+      error,
+    });
+  }
+};
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
@@ -100,6 +116,56 @@ export const perfil = async(req,res) => {
   })
 
 }
+
+export const updateUsuario = async (req, res, next) => {
+  try {
+    const usuarioActual = await User.findById(req.params.id);
+
+    if (!usuarioActual) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const { nombreCompleto, email, telefono, perfil } = req.body;
+    const data = {
+      nombreCompleto,
+      email,
+      telefono,
+      perfil
+    };
+
+    console.log("Este es el usuario original", usuarioActual);
+    console.log("Datos recibidos:", data);
+
+    if (req.files && req.files.perfil) {
+      const imgId = usuarioActual.perfil?.public_id;
+      if (imgId) {
+        await deleteFile(imgId);
+      }
+
+      const newImage = await uploadPerfil(req.files.perfil.tempFilePath);
+      data.perfil = {
+        public_id: newImage.public_id,
+        secure_url: newImage.secure_url
+      };
+
+      await fs.unlink(req.files.perfil.tempFilePath); // Eliminar el archivo temporal
+    }
+
+    console.log("Datos que se van a actualizar:", data);
+
+    const usuarioUpdated = await User.findByIdAndUpdate(req.params.id, data, { new: true });
+
+    return res.status(200).json(usuarioUpdated);
+
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).json({
+      message: "Error al actualizar el usuario",
+      error,
+    });
+    next(error);
+  }
+};
 
 export const verifyToken = async (req, res) => {
   const { token } = req.cookies;

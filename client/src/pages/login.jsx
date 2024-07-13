@@ -1,5 +1,4 @@
 import React from 'react';
-import { useEffect } from "react";
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
@@ -30,12 +29,12 @@ function LoginPage() {
     });
 
     return (
-        <div className="flex h-screen">
-            <div className="w-2/5 h-full">
+        <div className="flex flex-col lg:flex-row h-screen">
+            <div className="lg:w-2/5 h-1/2 lg:h-full">
                 <img src={fondoImg} className="object-cover h-full w-full" alt="Fondo" />
             </div>
-            <div className="w-3/5 flex justify-center items-center">
-                <div className="bg-white rounded-xl border-2 border-gray-300 p-6 shadow-lg hover:shadow-2xl hover:shadow-gray-700 transition duration-200 ease-in-out max-w-md h-80 w-96">
+            <div className="lg:w-3/5 flex justify-center items-center p-4 lg:p-0">
+                <div className="bg-white rounded-xl border-2 border-gray-300 p-6 shadow-lg hover:shadow-2xl hover:shadow-gray-700 transition duration-200 ease-in-out max-w-full lg:max-w-md w-full lg:w-96">
                     <h1 className="text-2xl text-center text-gray-800 font-semibold mt-4">Iniciar sesión</h1>
                     <form onSubmit={onSubmit} className="mt-4">
                         {loginErrors.map((error, i) => (

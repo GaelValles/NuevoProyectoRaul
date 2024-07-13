@@ -150,8 +150,8 @@ function PerfilConductorPage() {
                             {renderFile(conductor.psicofisico?.secure_url)}
                         </div>
                         <div>
-                            <strong>Aduana:</strong>
-                            {renderFile(conductor.aduana?.secure_url)}
+                            <strong>Escuela:</strong>
+                            {renderFile(conductor.escuela?.secure_url)}
                         </div>
                     </div>
                 </div>

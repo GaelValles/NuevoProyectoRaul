@@ -219,16 +219,16 @@ function RegistrarConductorPage() {
                                     </div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="aduana">
-                                            Licencia de Aduana
+                                            Certificado de escuela
                                         </label>
                                         <input
                                                                         className="border border-gray-700 w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                                        name="aduana"
-                                                                        id="aduana"
+                                                                        name="escuela"
+                                                                        id="escuela"
                                                                         type="file"
-                                                                        {...register('aduana', { required: true })}
+                                                                        {...register('escuela', { required: true })}
                                                                     />
-                                                                    {errors.aduana && <p className="text-red-500">La licencia de aduana es requerida</p>}
+                                                                    {errors.escuela && <p className="text-red-500">El certificado de la escuela es requerido</p>}
                                                                 </div>
                                                             </div>
                                                             <div className="col-span-1 md:col-span-3 text-center mt-6">
