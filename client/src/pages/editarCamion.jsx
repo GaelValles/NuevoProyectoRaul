@@ -23,7 +23,10 @@ function EditarCamionPage() {
                 setValue('placasUsa', camionData.placasUsa);
                 setValue('numEco', camionData.numEco);
                 setValue('numSerie', camionData.numSerie);
-                setValue('mantenimiento', camionData.mantenimiento);
+
+                // Formatear la fecha para establecerla en el input de tipo date
+                const formattedDate = new Date(camionData.mantenimiento).toISOString().split('T')[0];
+                setValue('mantenimiento', formattedDate);
             }
             setLoading(false);
         };
@@ -34,8 +37,8 @@ function EditarCamionPage() {
         try {
             await editarCamion(id, value);
             Swal.fire({
-                title: 'Camion actualizado',
-                text: 'La camion se ha actualizado correctamente.',
+                title: 'Camión actualizado',
+                text: 'El camión se ha actualizado correctamente.',
                 icon: 'success',
                 confirmButtonText: 'OK'
             });
@@ -43,7 +46,7 @@ function EditarCamionPage() {
         } catch (error) {
             Swal.fire({
                 title: 'Error',
-                text: 'Hubo un error al actualizar el camion. Inténtalo de nuevo.',
+                text: 'Hubo un error al actualizar el camión. Inténtalo de nuevo.',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
@@ -51,7 +54,9 @@ function EditarCamionPage() {
     });
 
     if (loading) {
-        return <div>Cargando...</div>;
+        return         <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-70 flex justify-center items-center">
+        <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
+    </div>;
     }
 
     return (
@@ -61,7 +66,7 @@ function EditarCamionPage() {
                 <div className="w-full max-w-3xl">
                     <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
                         <div className="flex justify-between items-center mb-6">
-                            <h1 className="text-2xl text-gray-800 font-semibold">Actualizar camion</h1>
+                            <h1 className="text-2xl text-gray-800 font-semibold">Actualizar camión</h1>
                             <Link to="/camiones" className="text-blue-500 hover:text-blue-700 transition duration-300">
                                 <i className="bi bi-arrow-left"></i> Volver
                             </Link>

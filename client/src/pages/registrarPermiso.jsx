@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAuth } from '../context/auth.context.jsx';
+import { useAuth } from '../context/auth.context';
 import { Link } from "react-router-dom";
-import Sidepage from '../components/sidebar.jsx';
+import Sidepage from '../components/sidebar';
 import Swal from 'sweetalert2';
 
 function RegistrarPermisoPage() {
     const { register, handleSubmit } = useForm();
     const { registrarPermiso } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [previews, setPreviews] = useState({});
 
     const onSubmit = handleSubmit(async (values) => {
         setIsSubmitting(true);
@@ -42,10 +43,18 @@ function RegistrarPermisoPage() {
         }
     });
 
+    const handleFileChange = (e) => {
+        const { name } = e.target;
+        const file = e.target.files[0];
+        if (file) {
+            setPreviews(prev => ({ ...prev, [name]: URL.createObjectURL(file) }));
+        }
+    };
+
     return (
         <div className="flex min-h-screen bg-gray-100">
             <Sidepage />
-            <div className="flex flex-1 justify-center items-center">
+            <div className="flex flex-col flex-1 justify-center items-center p-4 lg:ml-[300px]">
                 <div className="w-full max-w-3xl">
                     <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
                         <div className="flex justify-between items-center mb-6">
@@ -76,7 +85,11 @@ function RegistrarPermisoPage() {
                                     id="foto"
                                     type="file"
                                     {...register('foto', { required: true })}
+                                    onChange={handleFileChange}
                                 />
+                                {previews.foto && (
+                                    <img src={previews.foto} alt="Foto preview" className="h-40 w-40 object-cover rounded-md mt-2" />
+                                )}
                             </div>
                             <div>
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="descripcion">
@@ -102,7 +115,7 @@ function RegistrarPermisoPage() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="fechaAnticipacion">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="avisoAntelacion">
                                     Fecha para comenzar a recordar
                                 </label>
                                 <input
@@ -112,17 +125,13 @@ function RegistrarPermisoPage() {
                                     {...register('avisoAntelacion', { required: true })}
                                 />
                             </div>
-                            <div className="flex justify-center">
+                            <div className="flex items-center justify-between">
                                 <button
+                                    className="bg-gray-700 hover:bg-gray-900 w-full text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className={`rounded-full text-white font-semibold py-2 px-4 w-full md:w-1/2 bg-gray-700 hover:bg-gray-800 transition duration-300 ease-in-out ${isSubmitting ? 'cursor-not-allowed' : ''}`}
                                 >
-                                    {isSubmitting ? (
-                                        <svg className="animate-spin h-5 w-5 mr-3 border-t-2 border-white rounded-full" viewBox="0 0 24 24"></svg>
-                                    ) : (
-                                        'Ingresar'
-                                    )}
+                                    {isSubmitting ? 'Registrando...' : 'Registrar'}
                                 </button>
                             </div>
                         </form>

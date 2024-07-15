@@ -18,13 +18,13 @@ function PerfilPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
       <Sidepage />
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg transition transform hover:shadow-xl">
+      <div className="flex-1 flex items-center justify-center p-4 lg:ml-[300px]">
+        <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg transition-transform transform hover:shadow-xl hover:scale-105">
           <div className="flex flex-col items-center">
             <img 
               src={user.perfil.secure_url} 
               alt="Profile" 
-              className="w-32 h-32 rounded-full mb-4 object-cover"
+              className="w-36 h-36 rounded-md mb-4 object-cover"
             />
             <h2 className="text-2xl font-semibold mb-2">{user.nombreCompleto}</h2>
             <div className="text-left w-full space-y-4">
@@ -41,7 +41,7 @@ function PerfilPage() {
             </div>
             <button 
               onClick={handleEditProfile}
-              className="rounded-full bg-gray-700 hover:bg-gray-900 text-white px-6 py-2 font-semibold mt-6 transition ease-in-out"
+              className="mt-6 rounded-full bg-gray-700 hover:bg-gray-900 text-white px-6 py-2 font-semibold transition ease-in-out duration-300"
             >
               Editar Perfil
             </button>
@@ -50,6 +50,7 @@ function PerfilPage() {
       </div>
     </div>
   );
+  
 }
 
 export default PerfilPage;

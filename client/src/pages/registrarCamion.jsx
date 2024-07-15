@@ -41,7 +41,7 @@ function RegistrarCamionPage() {
         <div className="flex min-h-screen bg-gray-100">
             <Sidepage />
             <div className="flex flex-1 justify-center items-center">
-                <div className="w-full max-w-3xl">
+                <div className="w-full max-w-2xl ml-52">
                     <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl transition duration-300 ease-in-out">
                         <div className="flex justify-between items-center mb-6">
                             <h1 className="text-2xl text-gray-800 font-semibold">Registrar Camión</h1>

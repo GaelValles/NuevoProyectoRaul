@@ -100,16 +100,16 @@ function InicioPage() {
     return (
         <div className="flex">
             <Sidepage />
-            <div className="flex-1 p-6 bg-gray-100 min-h-screen ml-[300px]">
+            <div className="flex-1 p-6 bg-gray-100 min-h-screen lg:ml-[300px]">
                 <h2 className="text-2xl font-semibold mb-4 text-right">Bienvenido, {user.nombreCompleto}!</h2>
                 {loading ? (
-                        <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-70 flex justify-center items-center">
-                            <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
-                        </div>
+                    <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-70 flex justify-center items-center">
+                        <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
+                    </div>
                 ) : (
                     <div>
                         {/* Permisos */}
-                        <h1 className="text-3xl font-bold mb-6 text-center">Permisos</h1>  
+                        <h1 className="text-3xl font-bold mb-6 text-center">Permisos</h1>
                         <div className="mb-6">
                             <h2 className="text-2xl font-semibold mb-4">Permisos Próximos a Vencer</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -167,7 +167,7 @@ function InicioPage() {
                         </div>
                         {/* Camiones */}
                         <div className="mt-8">
-                            <h1 className="text-3xl font-bold mb-6 text-center">Camiones</h1> 
+                            <h1 className="text-3xl font-bold mb-6 text-center">Camiones</h1>
                             <h2 className="text-2xl font-semibold mb-4">Camiones Próximos a Mantenimiento</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
@@ -176,7 +176,7 @@ function InicioPage() {
                                         <div key={camion._id} className="bg-white p-4 rounded shadow-md transition-transform transform hover:scale-105 mb-4">
                                             <h3 className="text-xl font-bold">{camion.marca} {camion.modelo}</h3>
                                             <p className="text-gray-600">Tipo de Mantenimiento: {camion.type}</p>
-                                        </div>
+                                            </div>
                                     )) : (
                                         <p>No hay camiones próximos a mantenimiento en 1 mes.</p>
                                     )}
@@ -189,7 +189,7 @@ function InicioPage() {
                                 {camionesCategorized.expired.length > 0 ? camionesCategorized.expired.map(camion => (
                                     <div key={camion._id} className="bg-white p-4 rounded shadow-md transition-transform transform hover:scale-105 mb-4">
                                         <h3 className="text-xl font-bold">{camion.marca} {camion.modelo}</h3>
-                                        <p className="text-gray-600">Ultimo maantenimiento: {camion.mantenimiento}</p>
+                                        <p className="text-gray-600">Último mantenimiento: {new Date(camion.mantenimiento).toLocaleDateString()}</p>
                                         <p className="text-gray-600">Tipo de Mantenimiento: {camion.type}</p>
                                     </div>
                                 )) : (

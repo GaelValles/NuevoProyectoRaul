@@ -87,63 +87,83 @@ const filteredCajas = cajas.filter((caja) =>
 );
 
 return (
-        <div className="flex">
-            <SidePage />
-            <div className="flex-1 p-6 lg:ml-[300px]">
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-4xl text-black">Cajas</h1>
-                    <div className="flex items-center space-x-2 p-2 rounded">
+    <div className="flex flex-col lg:flex-row">
+        <SidePage />
+        <div className="flex-1 p-6 lg:ml-[300px]">
+            <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+                <h1 className="text-4xl text-black mb-4 md:mb-0">Cajas</h1>
+                <div className="flex flex-col md:flex-row md:items-center w-full md:w-auto">
+                    <div className="flex items-center space-x-2 p-2 rounded w-full md:w-auto mb-4 md:mb-0">
                         <input
                             type="text"
                             placeholder="Buscar..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="border-l-transparent border-gray-800 border-r-transparent border-t-transparent border-b-2 border-solid mt-3 mr-2"
-                            style={{ width: '400px' }}
+                            className="border-b-2 border-gray-800 mt-3 mr-2 w-full md:w-96"
                         />
                         <button className="text-gray-500">
                             <i className="bi bi-search"></i>
                         </button>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <button className="bi bi-download flex items-center bg-green-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-green-600 mr-2"></button>
-                        <Link to= "/registrarCaja" className="flex items-center bg-blue-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-blue-600 mr-2">Agregar</Link>
-                        <button onClick={handleDelete} className="bi bi-trash flex items-center bg-red-500 text-white h-10 mt-3 py-2 px-4 rounded-full hover:bg-red-600 mr-2"> Eliminar</button>
+                    <div className="flex flex-wrap md:items-center md:space-x-2 w-full md:w-auto">
+                        <Link
+                            to="/registrarCaja"
+                            className="flex items-center justify-center bg-blue-500 text-white h-10 py-2 px-4 rounded-full hover:bg-blue-600 mb-2 md:mb-0"
+                        >
+                            Agregar
+                        </Link>
+                        <button
+                            onClick={handleDelete}
+                            className="flex items-center justify-center bg-red-500 text-white h-10 py-2 px-4 rounded-full hover:bg-red-600"
+                        >
+                            Eliminar
+                        </button>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredCajas.length === 0 ? (
-                        <div className="text-center text-gray-600 mt-8 mb-4 text-2xl font-bold">No se ha encontrado ninguna caja</div>
-                    ) : (
-                        <>
-                            {filteredCajas.map((caja) => (
-                                <div key={caja._id} className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between cursor-pointer" onClick={() => handleCardClick(caja._id)}>
-                                    <div>
-                                        <h1 className="text-xl font-semibold">{caja.marca}</h1>
-                                        <p className="text-gray-600">{caja.placas}</p>
-                                        <p className="text-gray-600">{caja.numEco}</p>
-                                    </div>
-                                    <div className="flex items-center justify-between mt-4">
-                                        <input 
-                                            type="checkbox" 
-                                            className="rounded-xl mr-2" 
-                                            onChange={() => handleCheckboxChange(caja._id)}
-                                            checked={selectedCajas.includes(caja._id)}
-                                            onClick={(e) => e.stopPropagation()} 
-                                        />
-                                    </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredCajas.length === 0 ? (
+                    <div className="text-center text-gray-600 mt-8 mb-4 text-2xl font-bold">
+                        No se ha encontrado ninguna caja
+                    </div>
+                ) : (
+                    <>
+                        {filteredCajas.map((caja) => (
+                            <div
+                                key={caja._id}
+                                className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-between cursor-pointer transition-transform transform hover:scale-105"
+                                onClick={() => handleCardClick(caja._id)}
+                            >
+                                <div>
+                                    <h1 className="text-xl font-semibold">{caja.marca}</h1>
+                                    <p className="text-gray-600 truncate">{caja.placas}</p>
+                                    <p className="text-gray-600 truncate">{caja.numEco}</p>
                                 </div>
-                            ))}
-                            <Link to="/registrarCaja" className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-center items-center text-blue-500">
-                                <i className="bi bi-plus-lg text-4xl"></i>
-                                <span>Agregar Caja</span>
-                            </Link>
-                        </>
-                    )}
-                </div>
+                                <div className="flex items-center justify-between mt-4">
+                                    <input
+                                        type="checkbox"
+                                        className="rounded-xl mr-2"
+                                        onChange={() => handleCheckboxChange(caja._id)}
+                                        checked={selectedCajas.includes(caja._id)}
+                                        onClick={(e) => e.stopPropagation()} // Evitar que el checkbox active el evento de click en el card
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                        <Link
+                            to="/registrarCaja"
+                            className="bg-white rounded-lg shadow-md p-4 flex flex-col justify-center items-center text-blue-500 transition-transform transform hover:scale-105"
+                        >
+                            <i className="bi bi-plus-lg text-4xl"></i>
+                            <span>Agregar Caja</span>
+                        </Link>
+                    </>
+                )}
             </div>
         </div>
+    </div>
 );
+
 }
 
 export default CajasPage;
