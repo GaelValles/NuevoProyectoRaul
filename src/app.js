@@ -12,7 +12,7 @@ import './services/cronService.js';
 const app = express();
 
 app.use(cors({
-      origin:'http://localhost:5173',
+      origin:'https://estadialuga-frontend.onrender.com',
   credentials:true
 }));
 app.use(bodyParser.json());
