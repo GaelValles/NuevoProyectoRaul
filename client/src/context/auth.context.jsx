@@ -2,10 +2,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { loginRequest, verifyTokenRequest, logoutRequest, getUsuarioRequest, updateUsuarioRequest } from "../api/auth.js";
 import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
 import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest, getPermisoFileRequest } from "../api/auth.permiso.js";
-import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.camion.js";
+import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.profesor.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import { getAllCajas, registerCaja, getCajaRequest, updateCajaRequest } from "../api/auth.caja.js";
+import { getAllCajas, registerCaja, getCajaRequest, updateCajaRequest } from "../api/auth.alumno.js";
 import { cookie } from "express-validator";
 
 export const AuthContext = createContext();
