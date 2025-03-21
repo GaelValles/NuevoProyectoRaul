@@ -1,5 +1,3 @@
-
-
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken";
@@ -7,6 +5,8 @@ import { TOKEN_SECRET  } from "../config.js";
 import {createAccessToken} from '../libs/jwt.js'
 import fs from 'fs-extra';
 import { uploadPerfil, deleteFile } from "../libs/cloudinary.js";
+import Admin from "../models/admin.model.js";
+import { verifyRecaptcha } from '../utils/recaptcha.js';
 
 export const registrar = async (req, res) => {
   const { nombreCompleto, email, telefono, password } = req.body;
@@ -185,4 +185,102 @@ export const verifyToken = async (req, res) => {
       perfil:userFound.perfil,
     });
   });
+};
+
+export const loginAdmin = async (req, res) => {
+    try {
+        const { correo, password } = req.body;
+
+        // Validate required fields
+        if (!correo || !password) {
+            return res.status(400).json({
+                message: "Todos los campos son requeridos"
+            });
+        }
+
+        // Find admin
+        const adminFound = await Admin.findOne({ correo });
+        if (!adminFound) {
+            return res.status(400).json({
+                message: "Credenciales inválidas"
+            });
+        }
+
+        // Verify password
+        const isMatch = await bcrypt.compare(password, adminFound.password);
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Credenciales inválidas"
+            });
+        }
+
+        // Create token
+        const token = await createAccessToken({
+            id: adminFound._id,
+            rol: adminFound.rol
+        });
+
+        // Set cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+
+        // Send response
+        return res.json({
+            id: adminFound._id,
+            correo: adminFound.correo,
+            rol: adminFound.rol
+        });
+
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({
+            message: "Error del servidor"
+        });
+    }
+};
+
+export const registrarAdmin = async (req, res) => {
+  const { correo, password } = req.body;
+  
+  try {
+    // Check if admin already exists with that email
+    const adminFound = await Admin.findOne({ correo });
+    if (adminFound) {
+      return res.status(400).json({ message: "Esta cuenta ya existe" });
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create new admin
+    const newAdmin = new Admin({
+      correo,
+      password: passwordHash,
+      rol: 'admin'
+    });
+
+    // Save admin
+    const adminSaved = await newAdmin.save();
+
+    // Create token
+    const token = await createAccessToken({ id: adminSaved._id });
+    res.cookie('token', token);
+
+    // Return admin data
+    res.json({
+      id: adminSaved._id,
+      correo: adminSaved.correo,
+      rol: adminSaved.rol
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error al crear el administrador",
+      error: error.message
+    });
+  }
 };

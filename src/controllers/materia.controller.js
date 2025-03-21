@@ -112,3 +112,30 @@ export const deleteMateria = async (req, res) => {
         });
     }
 };
+
+export const getAlumnosByMateria = async (req, res) => {
+    try {
+        const { materiaId } = req.params;
+        
+        // Verify materiaId is received
+        console.log('MateriaID received:', materiaId);
+        
+        const materia = await Materia.findById(materiaId);
+        if (!materia) {
+            return res.status(404).json({ message: "Materia no encontrada" });
+        }
+
+        const alumnos = await Alumno.find({
+            grado: materia.grado,
+            grupo: materia.grupo
+        });
+
+        // Log found students
+        console.log('Alumnos encontrados:', alumnos.length);
+        
+        return res.json(alumnos);
+    } catch (error) {
+        console.error('Error en getAlumnosByMateria:', error);
+        return res.status(500).json({ message: error.message });
+    }
+};

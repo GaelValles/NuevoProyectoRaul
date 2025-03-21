@@ -45,3 +45,23 @@ export const getAsistenciasByAlumno = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+export const getAlumnosByMateria = async (req, res) => {
+    try {
+        const { materiaId } = req.params;
+        const materia = await Materia.findById(materiaId);
+        
+        if (!materia) {
+            return res.status(404).json({ message: "Materia no encontrada" });
+        }
+
+        const alumnos = await Alumno.find({
+            grado: materia.grado,
+            grupo: materia.grupo
+        }).sort({ nombreCompleto: 1 });
+
+        return res.json(alumnos);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};

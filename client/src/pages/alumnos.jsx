@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
-import { deleteAlumnoRequest } from "../api/auth.alumno";
 
 function AlumnosPage() {
     const { user, getPermisos, getPermisoFile } = useAuth();

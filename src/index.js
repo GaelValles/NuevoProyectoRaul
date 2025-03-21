@@ -13,7 +13,7 @@ async function main() {
   app.set('../client/pages', path.join(__dirname, "pages"));
   app.set('view engine', 'jsx');
 
-
+  console.log('RECAPTCHA_SECRET_KEY exists:', !!process.env.RECAPTCHA_SECRET_KEY);
 }
 
 main();

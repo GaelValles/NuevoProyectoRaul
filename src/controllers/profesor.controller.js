@@ -77,17 +77,23 @@ export const loginProfesor = async (req, res) => {
 //Obtener todos los profesores
 export const getProfesores = async (req, res) => {
     try {
-      const profesores = await Profesor.find({user:req.user.id}).populate('user');
-      res.json(profesores);
+        // Simply get all professors without the user filter
+        const profesores = await Profesor.find();
+        
+        // Add logging to debug
+        console.log('Profesores encontrados:', profesores.length);
+        
+        res.json(profesores);
     } catch (error) {
-      return res.status(500).json({
-        message: "Error al obtener los profesores",
-        error,
-      });
+        console.error("Error al obtener los profesores:", error);
+        return res.status(500).json({
+            message: "Error al obtener los profesores",
+            error: error.message
+        });
     }
-  };
+};
   
-  export const getCVFile = async (req, res) => {
+export const getCVFile = async (req, res) => {
     try {
       const profesor = await Profesor.findById(req.params.id);
       if (!profesor) {

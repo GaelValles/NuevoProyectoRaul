@@ -10,9 +10,9 @@ import {
 } from "../api/auth.profesor.js";
 import { 
     registerAlumno, 
-    getAllAlumnos, 
+
     getAlumnoRequest, 
-    deleteAlumnoRequest, 
+ 
     updateAlumnoRequest,
     loginAlumnoRequest 
 } from "../api/auth.alumno.js";

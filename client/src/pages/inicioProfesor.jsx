@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth.context';
-import logoImg from '../assets/images/logo.jpg';
 import { getMateriasByProfesorRequest } from '../api/auth.materia';
 
 const InicioProfesorPage = () => {
     const [materias, setMaterias] = useState([]);
-    const [filteredMaterias, setFilteredMaterias] = useState([]);
-    const [grupoFilter, setGrupoFilter] = useState('');
-    const [gradoFilter, setGradoFilter] = useState('');
-    const { profesor } = useAuth();
+    const { profesor, logout } = useAuth();
+    const navigate = useNavigate();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         const fetchMaterias = async () => {
             try {
                 const response = await getMateriasByProfesorRequest(profesor.id);
                 setMaterias(response.data);
-                setFilteredMaterias(response.data);
             } catch (error) {
                 console.error('Error fetching materias:', error);
             }
@@ -27,117 +24,112 @@ const InicioProfesorPage = () => {
         }
     }, [profesor?.id]);
 
-    useEffect(() => {
-        let result = materias;
+    const handleMateriaClick = (materia) => {
+        console.log('Datos de la materia seleccionada:', materia);
+        navigate(`/asistencias/${materia._id}`);
+    };
 
-        if (grupoFilter) {
-            result = result.filter(materia => materia.grupo === grupoFilter);
-        }
-
-        if (gradoFilter) {
-            result = result.filter(materia => materia.grado === gradoFilter);
-        }
-
-        setFilteredMaterias(result);
-    }, [grupoFilter, gradoFilter, materias]);
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    };
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white shadow-lg">
-                {/* ... existing navbar code ... */}
-            </nav>
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="md:flex md:items-center md:justify-between">
-                    <div className="flex-1 min-w-0">
-                        <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-                            Mis Materias
-                        </h2>
-                    </div>
-                    <div className="mt-4 flex md:mt-0 md:ml-4">
-                        <Link
-                            to="/registrarMateria"
-                            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Nueva Materia
-                        </Link>
-                    </div>
-                    <div className="mt-4 flex md:mt-0 md:ml-4">
-                        <Link
-                            to="/registrarAlumno"
-                            className="ml-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                        >
-                            Nuevo Alumno
-                        </Link>
-                    </div>
-                </div>
-
-                {/* Filters */}
-                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                    <div className="relative rounded-md shadow-sm">
-                        <select
-                            value={gradoFilter}
-                            onChange={(e) => setGradoFilter(e.target.value)}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                        >
-                            <option value="">Todos los grados</option>
-                            <option value="1">1° Grado</option>
-                            <option value="2">2° Grado</option>
-                            <option value="3">3° Grado</option>
-                        </select>
-                    </div>
-                    <div className="relative rounded-md shadow-sm">
-                        <select
-                            value={grupoFilter}
-                            onChange={(e) => setGrupoFilter(e.target.value)}
-                            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                        >
-                            <option value="">Todos los grupos</option>
-                            <option value="A">Grupo A</option>
-                            <option value="B">Grupo B</option>
-                            <option value="C">Grupo C</option>
-                        </select>
-                    </div>
-                </div>
-
-                {/* Materias Grid */}
-                <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {filteredMaterias.map((materia) => (
-                        <div
-                            key={materia._id}
-                            className="bg-white overflow-hidden shadow rounded-lg hover:shadow-xl transition-shadow duration-300"
-                        >
-                            <div className="p-6">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="h-12 w-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                            <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                        </div>
+        <div className="min-h-screen bg-gray-50 flex">
+            {/* Sidebar */}
+            <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out ${
+                sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+            } lg:translate-x-0 lg:static lg:inset-0`}>
+                <div className="h-full flex flex-col">
+                    {/* Profile Section */}
+                    <div className="p-6 border-b border-gray-200">
+                        <div className="flex flex-col items-center">
+                            <div className="relative w-24 h-24 rounded-full overflow-hidden mb-4">
+                                {profesor?.foto_perfil?.secure_url ? (
+                                    <img
+                                        src={profesor.foto_perfil.secure_url}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-blue-100 flex items-center justify-center">
+                                        <span className="text-2xl text-blue-600">
+                                            {profesor?.nombre_completo?.charAt(0)}
+                                        </span>
                                     </div>
-                                    <div className="ml-4">
-                                        <h3 className="text-lg font-medium text-gray-900">
-                                            {materia.nombre}
-                                        </h3>
-                                        <div className="mt-1 flex items-center">
-                                            <span className="text-sm text-gray-500">
-                                                Grado: {materia.grado}° | Grupo: {materia.grupo}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="mt-4">
-                                    <Link
-                                        to={`/asistencias/${materia.id}`}
-                                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
-                                    >
-                                        Ver lista de alumnos
-                                    </Link>
+                                )}
+                            </div>
+                            <h3 className="text-lg font-medium text-gray-900 text-center">
+                                {profesor?.nombre_completo}
+                            </h3>
+                            <p className="text-sm text-gray-500 text-center mt-1">
+                                {profesor?.correo}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Menu Items */}
+                    <nav className="flex-1 p-4">
+                        <div className="space-y-2">
+                            <button
+                                onClick={() => navigate(`/perfilProfesor/${profesor.id}`)}
+                                className="w-full flex items-center px-4 py-2 text-gray-600 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                            >
+                                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                Mi Perfil
+                            </button>
+                            <button
+                                onClick={handleLogout}
+                                className="w-full flex items-center px-4 py-2 text-gray-600 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                            >
+                                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
+                                Cerrar Sesión
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 lg:ml-64">
+                {/* Toggle Sidebar Button (Mobile) */}
+                <button
+                    className="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-md bg-white shadow-md"
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                >
+                    <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
+                {/* Existing Content */}
+                <div className="py-8 px-4">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                        Mis Materias
+                    </h2>
+
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {materias.map((materia) => (
+                            <div
+                                key={materia._id}
+                                className="bg-white overflow-hidden shadow rounded-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                                onClick={() => handleMateriaClick(materia)}
+                            >
+                                <div className="p-6">
+                                    <h3 className="text-lg font-medium text-gray-900">
+                                        {materia.nombre}
+                                    </h3>
+                                    <p className="mt-2 text-sm text-gray-500">
+                                        Grado: {materia.grado}° | Grupo: {materia.grupo}
+                                    </p>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

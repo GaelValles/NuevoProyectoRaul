@@ -210,3 +210,28 @@ export const deleteAlumno = async (req, res) => {
     });
   }
 };
+
+export const getAlumnosByMateria = async (req, res) => {
+    try {
+        const { materiaId } = req.params;
+        const materia = await Materia.findById(materiaId);
+        
+        if (!materia) {
+            return res.status(404).json({ message: "Materia no encontrada" });
+        }
+
+        const alumnos = await Alumno.find({
+            grado: materia.grado,
+            grupo: materia.grupo,
+            carrera: materia.carrera
+        });
+
+        res.json(alumnos);
+    } catch (error) {
+        console.error("Error getting students:", error);
+        res.status(500).json({ 
+            message: "Error al obtener los alumnos",
+            error: error.message 
+        });
+    }
+};

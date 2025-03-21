@@ -1,100 +1,219 @@
-import React from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from 'react-hook-form';
-import Sidepage from '../components/sidebar';
 import Swal from 'sweetalert2';
+import { registerProfesor } from '../api/auth.profesor';
 
-function RegistrarCajaPage() {
-    const { register, handleSubmit, reset } = useForm();
+function RegistrarProfesorPage() {
+    const { register, handleSubmit, formState: { errors } } = useForm();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [previewCV, setPreviewCV] = useState(null);
+    const [previewFoto, setPreviewFoto] = useState(null);
 
-    const onSubmit = async (value) => {
+    const onSubmit = async (data) => {
         try {
-            // Aquí iría la lógica para registrar la caja
-            console.log(value);
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('nombre_completo', data.nombre_completo);
+            formData.append('telefono', data.telefono);
+            formData.append('correo', data.correo);
+            formData.append('password', data.password);
+            if (data.cv[0]) formData.append('cv', data.cv[0]);
+            if (data.foto_perfil[0]) formData.append('foto_perfil', data.foto_perfil[0]);
+
+            await registerProfesor(formData);
+
             Swal.fire({
-                title: 'Caja registrada',
-                text: 'La caja se ha registrado correctamente.',
+                title: '¡Registro exitoso!',
+                text: 'El profesor ha sido registrado correctamente.',
                 icon: 'success',
-                confirmButtonText: 'OK'
+                confirmButtonText: 'Continuar'
             });
-            reset(); // Resetear el formulario después de enviar
+            navigate('/profesores');
         } catch (error) {
             Swal.fire({
                 title: 'Error',
-                text: 'Hubo un error al registrar la caja. Inténtalo de nuevo.',
+                text: error.response?.data?.message || 'Error al registrar profesor',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFilePreview = (e, setPreview) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => setPreview(reader.result);
+            reader.readAsDataURL(file);
         }
     };
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
-            <Sidepage />
-            <div className="flex-1 flex justify-center items-center ">
-                <div className="w-full max-w-3xl ml-40">
-                    <div className="bg-white rounded-lg border-4 border-gray-700 p-8 shadow-lg hover:shadow-2xl transition duration-300 ease-in-out relative">
-                        <h1 className="text-2xl text-center text-gray-800 font-semibold mb-4">Registrar Caja</h1>
-                        <Link to="/cajas" className="text-blue-500 hover:text-blue-700 transition duration-300 absolute top-4 right-4">
-                            <i className="bi bi-arrow-left"></i> Volver
-                        </Link>
-                        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4">
-                            <div className="mb-4">
-                                <label htmlFor="placas" className="block text-sm font-bold text-gray-700">Placas de la caja</label>
-                                <input
-                                    id="placas"
-                                    type="text"
-                                    placeholder="Placas de la caja"
-                                    {...register('placas', { required: true })}
-                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
-                                />
+        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                    <div className="px-6 py-8 sm:p-10">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-900">
+                                Registro de Profesor
+                            </h2>
+                            <p className="mt-2 text-sm text-gray-600">
+                                Complete el formulario con sus datos profesionales
+                            </p>
+                        </div>
+
+                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
+                                {/* Nombre Completo */}
+                                <div className="col-span-2">
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Nombre Completo
+                                    </label>
+                                    <input
+                                        type="text"
+                                        {...register('nombre_completo', { 
+                                            required: 'El nombre es requerido',
+                                            pattern: {
+                                                value: /^[A-Za-zÀ-ÿ\s]{3,100}$/,
+                                                message: 'Ingrese un nombre válido'
+                                            }
+                                        })}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                    {errors.nombre_completo && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.nombre_completo.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Teléfono */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Teléfono
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        {...register('telefono', { 
+                                            required: 'El teléfono es requerido',
+                                            pattern: {
+                                                value: /^\d{10}$/,
+                                                message: 'Ingrese un número de 10 dígitos'
+                                            }
+                                        })}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                    {errors.telefono && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.telefono.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Correo */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Correo Electrónico
+                                    </label>
+                                    <input
+                                        type="email"
+                                        {...register('correo', { 
+                                            required: 'El correo es requerido',
+                                            pattern: {
+                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                message: 'Ingrese un correo válido'
+                                            }
+                                        })}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                    {errors.correo && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.correo.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Contraseña */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Contraseña
+                                    </label>
+                                    <input
+                                        type="password"
+                                        {...register('password', { 
+                                            required: 'La contraseña es requerida',
+                                            minLength: {
+                                                value: 6,
+                                                message: 'La contraseña debe tener al menos 6 caracteres'
+                                            }
+                                        })}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                    />
+                                    {errors.password && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                                    )}
+                                </div>
+
+                                {/* CV */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Curriculum Vitae (PDF)
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept=".pdf"
+                                        {...register('cv', { required: 'El CV es requerido' })}
+                                        onChange={(e) => handleFilePreview(e, setPreviewCV)}
+                                        className="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-md file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100"
+                                    />
+                                    {errors.cv && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.cv.message}</p>
+                                    )}
+                                </div>
+
+                                {/* Foto de Perfil */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Foto de Perfil
+                                    </label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        {...register('foto_perfil', { required: 'La foto es requerida' })}
+                                        onChange={(e) => handleFilePreview(e, setPreviewFoto)}
+                                        className="mt-1 block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4
+                                        file:rounded-md file:border-0
+                                        file:text-sm file:font-semibold
+                                        file:bg-blue-50 file:text-blue-700
+                                        hover:file:bg-blue-100"
+                                    />
+                                    {errors.foto_perfil && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.foto_perfil.message}</p>
+                                    )}
+                                    {previewFoto && (
+                                        <img src={previewFoto} alt="Preview" className="mt-2 h-20 w-20 object-cover rounded-full" />
+                                    )}
+                                </div>
                             </div>
-                            <div className="mb-4">
-                                <label htmlFor="numEco" className="block text-sm font-bold text-gray-700">Número de Eco</label>
-                                <input
-                                    id="numEco"
-                                    type="text"
-                                    placeholder="Número de Eco"
-                                    {...register('numEco', { required: true })}
-                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="marca" className="block text-sm font-bold text-gray-700">Marca</label>
-                                <input
-                                    id="marca"
-                                    type="text"
-                                    placeholder="Marca"
-                                    {...register('marca', { required: true })}
-                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="anio" className="block text-sm font-bold text-gray-700">Año</label>
-                                <input
-                                    id="anio"
-                                    type="number"
-                                    placeholder="Año"
-                                    {...register('anio', { required: true })}
-                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="numSerie" className="block text-sm font-bold text-gray-700">Número de Serie</label>
-                                <input
-                                    id="numSerie"
-                                    type="text"
-                                    placeholder="Número de Serie"
-                                    {...register('numSerie', { required: true })}
-                                    className="border-b-2 border-gray-700 w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-                            <div className="col-span-full flex justify-center">
+
+                            <div className="flex items-center justify-end space-x-4 mt-6">
+                                <Link
+                                    to="/profesores"
+                                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                >
+                                    Cancelar
+                                </Link>
                                 <button
                                     type="submit"
-                                    className="rounded-full bg-gray-700 hover:bg-gray-900 text-white font-semibold py-2 px-4 w-full md:w-1/2 mt-4 transition duration-300 ease-in-out"
+                                    disabled={loading}
+                                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                                        disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    Ingresar
+                                    {loading ? 'Registrando...' : 'Registrar Profesor'}
                                 </button>
                             </div>
                         </form>
@@ -105,4 +224,4 @@ function RegistrarCajaPage() {
     );
 }
 
-export default RegistrarCajaPage;
+export default RegistrarProfesorPage;

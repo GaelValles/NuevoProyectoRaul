@@ -18,8 +18,12 @@ import PerfilProfesorPage from './pages/perfilProfesor.jsx';
 import PerfilAlumnoPage from './pages/perfilAlumno.jsx';
 import PerfilPage from './pages/perfil.jsx';
 import LoginPage from './pages/login';
+import LoginAlumnoPage from './pages/loginAlumno';
+import LoginAdminPage from './pages/loginAdmin';
 import InicioPage from './pages/inicio';
 import InicioProfesorPage from './pages/inicioProfesor';
+import AsistenciasPage from './pages/asistencias';
+
 function App(){
   return (
     <AuthProvider>
@@ -27,7 +31,11 @@ function App(){
       <Routes>
         <Route path='/' element={ <InicioPage /> }/>
         <Route path='/login' element={ <LoginPage /> }/>
+        <Route path='/loginAlumnos' element={ <LoginAlumnoPage /> }/>
+        <Route path='/loginAdmin' element={ <LoginAdminPage /> }/>
         <Route path='/inicio' element={ < InicioPage />}/> 
+        <Route path='/profesores' element={< ProfesoresPage />}/>
+        <Route path='/perfilProfesor/:id' element={< PerfilProfesorPage />}/>
         <Route element={<ProtectedRoute />}>
           
           <Route path='/inicioProfesor' element={ < InicioProfesorPage />}/> 
@@ -35,9 +43,10 @@ function App(){
           <Route path='/editaMateria/:id' element={<EditarMateriaPage />}/>
           <Route path='/editarAlumno/:id' element={<EditarAlumnoPage />}/>
 
-          <Route path='/profesores' element={< ProfesoresPage />}/>
+          
           <Route path='/alumnos' element={< AlumnosPage />}/>
           <Route path="/materia/:id/asistencias" element={<AsistenciaPage />} />
+          <Route path="/asistencias/:id" element={<AsistenciasPage />} />
 
           <Route path='/perfilProfesor/:id' element={< PerfilProfesorPage />}/>
           <Route path='/perfilAlumno/:id' element={<PerfilAlumnoPage />}/>
