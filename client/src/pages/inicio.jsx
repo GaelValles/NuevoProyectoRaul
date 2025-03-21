@@ -81,43 +81,37 @@ const Inicio = () => {
             </nav>
 
             {/* Hero Section */}
-            <div className="relative bg-white overflow-hidden">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col lg:flex-row items-center justify-between py-12 px-4 sm:px-6 lg:py-16">
-                        {/* Text Content */}
-                        <div className="lg:w-1/2 lg:pr-8 z-10">
-                            <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl text-center lg:text-left">
-                                <span className="block">Bienvenido al</span>
-                                <span className="block text-blue-600">Portal Académico</span>
-                            </h1>
-                            <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg md:text-xl text-center lg:text-left">
-                                Tu puerta de acceso al conocimiento y la excelencia académica. Gestiona tus actividades, accede a recursos y más.
-                            </p>
-                            <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                                <Link
-                                    to="/login"
-                                    className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 transform hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-xl md:py-4 md:text-lg"
-                                >
-                                    Acceso Profesores
-                                </Link>
-                                <Link
-                                    to="/loginAlumno"
-                                    className="flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-blue-700 bg-blue-50 hover:bg-blue-100 transform hover:-translate-y-1 transition-all duration-200 shadow-md hover:shadow-xl md:py-4 md:text-lg"
-                                >
-                                    Acceso Alumnos
-                                </Link>
-                            </div>
-                        </div>
-
-                        {/* Image */}
-                        <div className="lg:w-1/2 mt-10 lg:mt-0">
-                            <div className="relative rounded-lg overflow-hidden shadow-xl">
-                                <img
-                                    className="w-full h-[500px] object-cover transform hover:scale-105 transition-transform duration-700 ease-in-out"
-                                    src={bufalosImg}
-                                    alt="Universidad"
-                                />
-                            </div>
+            <div className="relative min-h-[600px] bg-black">
+                {/* Background Image */}
+                <img
+                    className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    src={bufalosImg}
+                    alt="Universidad"
+                />
+                
+                {/* Content Overlay */}
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                    <div className="flex flex-col items-center lg:items-start max-w-2xl">
+                        <h1 className="text-4xl tracking-tight font-extrabold text-white sm:text-5xl md:text-6xl text-center lg:text-left">
+                            <span className="block">Bienvenido al</span>
+                            <span className="block text-blue-400">Portal Académico</span>
+                        </h1>
+                        <p className="mt-3 text-base text-gray-100 sm:mt-5 sm:text-lg md:text-xl text-center lg:text-left">
+                            Tu puerta de acceso al conocimiento y la excelencia académica. Gestiona tus actividades, accede a recursos y más.
+                        </p>
+                        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start w-full sm:w-auto">
+                            <Link
+                                to="/login"
+                                className="w-full sm:w-auto flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-xl text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 shadow-lg hover:shadow-xl md:py-4 md:text-lg md:px-10"
+                            >
+                                Acceso Profesores
+                            </Link>
+                            <Link
+                                to="/loginAlumno"
+                                className="w-full sm:w-auto flex items-center justify-center px-8 py-3 border-2 border-white text-base font-medium rounded-xl text-white bg-transparent hover:bg-white/10 transition-colors duration-200 shadow-lg hover:shadow-xl md:py-4 md:text-lg md:px-10"
+                            >
+                                Acceso Alumnos
+                            </Link>
                         </div>
                     </div>
                 </div>
