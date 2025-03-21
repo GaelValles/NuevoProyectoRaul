@@ -23,6 +23,21 @@ const uploadFile = async (file, uploadFunction) => {
   };
 };
 
+const uploadPerfil = async (file) => {
+    try {
+        const result = await cloudinary.uploader.upload(file, {
+            folder: "alumnos/perfiles"
+        });
+        return {
+            public_id: result.public_id,
+            secure_url: result.secure_url
+        };
+    } catch (error) {
+        console.error("Error uploading profile:", error);
+        throw new Error("Error al subir la imagen de perfil");
+    }
+};
+
 // Obtener todos los conductores
 export const getAlumnos = async (req, res) => {
   try {
@@ -35,25 +50,63 @@ export const getAlumnos = async (req, res) => {
 
 // Crear un alumno
 export const postAlumnos = async (req, res) => {
-    const { nombreCompleto, matricula, carrera, grado, grupo, correo, telefono, perfil, password } = req.body;
-  try {
-    const newAlumno = new Alumno({ nombreCompleto, matricula, carrera, grado, grupo, correo, telefono, perfil, password, user: req.user.id });
+    try {
+        const { 
+            nombreCompleto, 
+            matricula, 
+            carrera, 
+            grado, 
+            grupo, 
+            correo, 
+            telefono, 
+            password 
+        } = req.body;
 
-    const fileUploads = {
-      perfil: uploadPerfil,
-    };
+        // Create new student instance
+        const newAlumno = new Alumno({
+            nombreCompleto,
+            matricula,
+            carrera,
+            grado,
+            grupo,
+            correo,
+            telefono,
+            password
+        });
 
-    for (const [key, uploadFunction] of Object.entries(fileUploads)) {
-      if (req.files?.[key]) {
-        newAlumno[key] = await uploadFile(req.files[key], uploadFunction);
-      }
+        // Handle profile picture if present
+        if (req.files?.perfil) {
+            try {
+                const result = await uploadPerfil(req.files.perfil.tempFilePath);
+                newAlumno.perfil = result;
+                await fs.unlink(req.files.perfil.tempFilePath);
+            } catch (error) {
+                return res.status(400).json({
+                    message: "Error al subir la imagen de perfil",
+                    error: error.message
+                });
+            }
+        }
+
+        // Save the student
+        const savedAlumno = await newAlumno.save();
+        
+        // Remove sensitive data from response
+        const alumnoResponse = savedAlumno.toObject();
+        delete alumnoResponse.password;
+
+        res.json({
+            message: "Alumno creado exitosamente",
+            alumno: alumnoResponse
+        });
+
+    } catch (error) {
+        console.error("Error creating student:", error);
+        return res.status(500).json({ 
+            message: "Error al crear el alumno",
+            error: error.message 
+        });
     }
-
-    const savedAlumno = await newAlumno.save();
-    res.json(savedAlumno);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
 };
 
 // Obtener un alumno por id

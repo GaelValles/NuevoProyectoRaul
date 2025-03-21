@@ -6,9 +6,9 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { deleteConductorRequest } from "../api/auth.conductor";
+import { deleteProfesorRequest } from "../api/auth.profesor";
 
-function ConductoresPage() {
+function ProfesoresPage() {
     const { user, getConductors, getConductorFiles } = useAuth();
     const [conductores, setConductores] = useState([]);
     const [selectedConductores, setSelectedConductores] = useState([]);
@@ -239,4 +239,4 @@ function ConductoresPage() {
     
 }
 
-export default ConductoresPage;
+export default ProfesoresPage;

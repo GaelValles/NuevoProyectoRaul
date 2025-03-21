@@ -5,7 +5,7 @@ import { useAuth } from '../context/auth.context';
 import Sidepage from '../components/sidebar';
 import Swal from 'sweetalert2';
 
-function EditarCamionPage() {
+function EditarProfesorPage() {
     const { id } = useParams();
     const { register, handleSubmit, reset, setValue } = useForm();
     const { getCamionById, editarCamion } = useAuth();
@@ -168,4 +168,4 @@ function EditarCamionPage() {
     );
 }
 
-export default EditarCamionPage;
+export default EditarProfesorPage;

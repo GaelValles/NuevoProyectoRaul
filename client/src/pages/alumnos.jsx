@@ -6,9 +6,9 @@ import Swal from 'sweetalert2';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import axios from 'axios';
-import { deletePermisoRequest } from "../api/auth.permiso";
+import { deleteAlumnoRequest } from "../api/auth.alumno";
 
-function PermisosPage() {
+function AlumnosPage() {
     const { user, getPermisos, getPermisoFile } = useAuth();
     const [permisos, setPermisos] = useState([]);
     const [selectedPermisos, setSelectedPermisos] = useState([]);
@@ -48,7 +48,7 @@ function PermisosPage() {
             if (result.isConfirmed) {
                 try {
                     await Promise.all(selectedPermisos.map(async (id) => {
-                        await deletePermisoRequest(id);
+                        await deleteAlumnoRequest(id);
                     }));
                     const updatedPermisos = permisos.filter(permiso => !selectedPermisos.includes(permiso._id));
                     setPermisos(updatedPermisos);
@@ -234,4 +234,4 @@ function PermisosPage() {
     
 }
 
-export default PermisosPage;
+export default AlumnosPage;

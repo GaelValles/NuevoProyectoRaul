@@ -1,6 +1,8 @@
 import Profesor from "../models/profesor.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs-extra";
+import bcrypt from 'bcryptjs';
+import { createAccessToken } from "../libs/jwt.js";
 
 cloudinary.config({
   cloud_name: "dftu2fjzj",
@@ -17,28 +19,59 @@ const uploadFile = async (file, uploadFunction) => {
   };
 };
 
+const uploadCV = async (file) => {
+  return await cloudinary.uploader.upload(file, {
+    folder: "profesores/cv"
+  });
+};
+
+const uploadPerfil = async (file) => {
+  return await cloudinary.uploader.upload(file, {
+    folder: "profesores/perfiles"
+  });
+};
+
 export const loginProfesor = async (req, res) => {
     const { correo, password } = req.body;
     try {
-        const userFound = await User.findOne({ correo });
-        if (!userFound) return res.status(400).json({ message: "Datos invalidos correo" });
+        const profesorFound = await Profesor.findOne({ correo });
+        if (!profesorFound) {
+            return res.status(400).json({ 
+                message: "Correo o contraseña incorrectos" 
+            });
+        }
 
-        const isMatch = await bcrypt.compare(password, userFound.password);
-        if (!isMatch) return res.status(400).json({ message: "Datos invalidos" });
+        const isMatch = await bcrypt.compare(password, profesorFound.password);
+        if (!isMatch) {
+            return res.status(400).json({ 
+                message: "Correo o contraseña incorrectos" 
+            });
+        }
 
-        const token = await createAccessToken({ id: userFound._id, correo: userFound.correo });
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'none' });
+        const token = await createAccessToken({ 
+            id: profesorFound._id, 
+            correo: profesorFound.correo 
+        });
+
+        res.cookie('token', token, { 
+            httpOnly: true, 
+            secure: true, 
+            sameSite: 'none' 
+        });
         
         res.json({
-            id: userFound._id,
-            foto_perfil: userFound.foto_perfil,
-            nombre_completo: userFound.nombre_completo,
-            correo: userFound.correo,
-            telefono: userFound.telefono
-             
+            id: profesorFound._id,
+            nombre_completo: profesorFound.nombre_completo,
+            correo: profesorFound.correo,
+            telefono: profesorFound.telefono,
+            foto_perfil: profesorFound.foto_perfil
         });
+
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Error en login:", error);
+        res.status(500).json({ 
+            message: "Error en el servidor" 
+        });
     }
 };
 //Obtener todos los profesores
@@ -81,26 +114,49 @@ export const getProfesores = async (req, res) => {
 
 //Crear un profesor
 export const postProfesor = async (req, res) => {
-      const { nombre_completo, telefono, correo, cv, foto_perfil, password } = req.body;  
   try {
-    console.log(req)
-      const newProfesor = new Profesor({ nombre_completo, telefono, correo, cv, foto_perfil, password, user: req.user.id });
+    const { nombre_completo, telefono, correo, password } = req.body;
 
-      const fileUploads = {
-        perfil: uploadPerfil,
-      };
-  
-      for (const [key, uploadFunction] of Object.entries(fileUploads)) {
-        if (req.files?.[key]) {
-          newAlumno[key] = await uploadFile(req.files[key], uploadFunction);
-        }
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create new professor instance
+    const newProfesor = new Profesor({
+      nombre_completo,
+      telefono,
+      correo,
+      password: passwordHash // Store the hashed password
+    });
+
+    // Handle file uploads if present
+    if (req.files) {
+      if (req.files.cv) {
+        const cvResult = await uploadFile(req.files.cv, uploadCV);
+        newProfesor.cv = cvResult;
       }
-    } catch (error) {
-      return res.status(500).json({
-        message: "Error al crear el profesor",
-        error,
-      });
+
+      if (req.files.foto_perfil) {
+        const perfilResult = await uploadFile(req.files.foto_perfil, uploadPerfil);
+        newProfesor.foto_perfil = perfilResult;
+      }
     }
+
+    // Save the professor to database
+    const savedProfesor = await newProfesor.save();
+
+    // Send success response without sending back the password
+    res.status(201).json({
+      message: "Profesor creado exitosamente",
+      profesor: savedProfesor
+    });
+
+  } catch (error) {
+    console.error("Error al crear el profesor:", error);
+    return res.status(500).json({
+      message: "Error al crear el profesor",
+      error: error.message
+    });
+  }
 };
   
 //Obtener solo un profesor por id

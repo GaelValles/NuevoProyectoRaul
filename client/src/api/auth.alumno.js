@@ -1,11 +1,16 @@
 import axios from "./axios";
 
-export const registerCaja = caja => axios.post(`/registrarCaja`, caja)
+export const loginAlumnoRequest = (alumno) => axios.post(`/loginAlumno`, alumno)
 
-export const getAllCajas = () => axios.get(`/cajas`);
+export const registerAlumno = alumno => axios.post(`/registrarAlumno`, alumno)
 
-export const getCajaRequest= (id) => axios.get(`/caja/${id}`);
+export const getAllAlumnos = () => axios.get(`/cajas`);
 
-export const deleteCajaRequest = (id) => axios.delete(`/caja/${id}/delete`);
+export const getAlumnoRequest= (id) => axios.get(`/alumno/${id}`);
 
-export const updateCajaRequest = async (id, cajaData) => axios.put(`/caja/${id}/update`, cajaData);
+export const deleteAlumnoRequest = (id) => axios.delete(`/alumno/${id}/delete`);
+
+export const updateAlumnoRequest = async (id, alumnoData) => axios.put(`/alumno/${id}/update`, alumnoData);
+
+export const getAlumnosByFilterRequest = async (filters) => 
+    axios.post('/alumnos/filter', filters);

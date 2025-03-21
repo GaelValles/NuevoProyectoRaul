@@ -7,7 +7,7 @@ const profesorSchema = new mongoose.Schema({
         trim: true
     },
     telefono: {
-        type: Date,
+        type: String,
         required: true
     },
     correo: {

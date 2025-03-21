@@ -4,7 +4,10 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 function Sidepage() {
-  const { logout, user } = useAuth();
+  const { logout, profesor, alumno, userType } = useAuth();
+
+  // Get the correct user data based on type
+  const userData = userType === 'profesor' ? profesor : alumno;
 
   const toggleSidebar = () => {
     document.querySelector('.sidebar').classList.toggle('hidden');
@@ -12,7 +15,7 @@ function Sidepage() {
 
   const handleLogout = () => {
     Swal.fire({
-      title: 'Seguro de salir?',
+      title: '¿Seguro de salir?',
       text: "Estás a punto de cerrar sesión",
       icon: 'warning',
       showCancelButton: true,
@@ -39,46 +42,35 @@ function Sidepage() {
           {/* Perfil del Usuario */}
           <div className="p-2.5 mt-1 flex items-center rounded-md">
             <img 
-              src={user.perfil?.secure_url || 'default_image_url'}  // Usa 'default_image_url' si no hay imagen disponible
+              src={userData?.perfil?.secure_url || '/default-avatar.png'}
               alt="Profile" 
-              className="w-32 h-16"
+              className="w-32 h-16 object-cover rounded-full"
             />
-
           </div>
 
           <div className="p-2.5 mt-1 flex items-center justify-end rounded-md">
             <i className="bi bi-x cursor-pointer lg:hidden" onClick={toggleSidebar} style={{ fontSize: '2rem' }}></i>
           </div>
 
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/Inicio"><i className="bi bi-house-door-fill hover:text-blue-700"></i></Link>
-            <Link to="/Inicio"><h1 className="text-[17px] ml-4 text-black hover:text-blue-700">Inicio</h1></Link>
-          </div>
-
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/conductores"><i className="bi bi-people-fill hover:text-blue-700"></i></Link>
-            <Link to="/conductores"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Conductores</span></Link>
-          </div>
-
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/permisos"><i className="bi bi-folder-fill hover:text-blue-700"></i></Link>
-            <Link to="/permisos"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Permisos</span></Link>
-          </div>
-
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/camiones"><i className="bi bi-truck hover:text-blue-700"></i></Link>
-            <Link to="/camiones"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Camiones</span></Link>
-          </div>
-          
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/cajas"><i className="bi bi-archive-box hover:text-blue-700"></i></Link>
-            <Link to="/cajas"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Cajas</span></Link>
-          </div>
-
-          <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
-            <Link to="/perfil"><i className="bi bi-person-circle hover:text-blue-700"></i></Link>
-            <Link to="/perfil"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Perfil</span></Link>
-          </div>
+          {userType === 'profesor' ? (
+            // Profesor menu items
+            <>
+              <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
+                <Link to="/inicioProfesor"><i className="bi bi-house-door-fill hover:text-blue-700"></i></Link>
+                <Link to="/inicioProfesor"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Inicio</span></Link>
+              </div>
+              {/* Add other profesor specific menu items */}
+            </>
+          ) : (
+            // Alumno menu items
+            <>
+              <div className="p-2 mt-2 flex items-center rounded-md px-4 duration-300 cursor-pointer">
+                <Link to="/inicioAlumno"><i className="bi bi-house-door-fill hover:text-blue-700"></i></Link>
+                <Link to="/inicioAlumno"><span className="text-[17px] ml-4 text-black hover:text-blue-700">Inicio</span></Link>
+              </div>
+              {/* Add other alumno specific menu items */}
+            </>
+          )}
 
           <hr className="my-4 text-gray-600" />
 

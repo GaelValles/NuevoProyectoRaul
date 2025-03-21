@@ -1,34 +1,16 @@
 import axios from './axios';
 
+export const getMateriaRequest = async (id) => 
+    axios.get(`/materia/${id}/search`);
 
-export const registerConductor = (conductor) => axios.post('/conductor', conductor, {
-    headers: {
-        'Content-Type': 'multipart/form-data'
-    }
-});
-export const getAllConductors = () => axios.get(`/conductores`);
+export const createMateriaRequest = async (profesorId, materia) => 
+    axios.post(`/profesores/${profesorId}/registrarMaterias`, materia);
 
-export const getConductorRequest= (id) => axios.get(`/conductor/${id}`);
+export const getMateriasByProfesorRequest = async (profesorId) => 
+    axios.get(`/profesores/${profesorId}/materias`);
 
-export const deleteConductorRequest = (id) => axios.delete(`/conductor/${id}/delete`);
+export const updateMateriaRequest = async (materiaId, materia) => 
+    axios.put(`/materia/${materiaId}/update`, materia);
 
-export const restoreUserRequest = async (id) => {
-    try {
-        await axios.put(`/restaurarUsuario/${id}`);
-    } catch (error) {
-        console.error("Error al restaurar el conductor:", error);
-        throw new Error("Error al restaurar el conductor");
-    }
-};
-
-export const getConductorFilesRequest = (idconductor) => axios.get(`/conductor/${idconductor}/files`);
-
-export const updateConductorRequest = (id, formData) => {
-    console.log("Datos enviados al backend:", formData);
-    return axios.put(`/conductor/${id}/update`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-};
-
+export const deleteMateriaRequest = async (materiaId) => 
+    axios.delete(`/materia/${materiaId}/delete`);

@@ -8,7 +8,7 @@ import doc from '../assets/images/doc.png';
 
 Modal.setAppElement('#root');
 
-function PerfilPermisoPage() {
+function PerfilAlumnoPage() {
     const { id } = useParams();
     const { getPermisoById } = useAuth();
     const [permiso, setPermiso] = useState(null);
@@ -133,4 +133,4 @@ function PerfilPermisoPage() {
     );
 }
 
-export default PerfilPermisoPage;
+export default PerfilAlumnoPage;

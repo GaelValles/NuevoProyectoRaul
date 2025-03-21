@@ -8,24 +8,24 @@ import doc from '../assets/images/doc.png';
 
 Modal.setAppElement('#root');
 
-function PerfilCajaPage() {
+function PerfilProfesorPage() {
     const { id } = useParams();
-    const { getCajaById } = useAuth();
-    const [caja, setCaja] = useState(null);
+    const { getCamionById } = useAuth();
+    const [camion, setCamion] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCaja = async () => {
-            const cajaData = await getCajaById(id);
-            setCaja(cajaData);
-            console.log("El caja es", cajaData);
+        const fetchCamion = async () => {
+            const camionData = await getCamionById(id);
+            setCamion(camionData);
+            console.log("El camion es", camionData);
         };
-        fetchCaja();
-    }, [id, getCajaById]);
+        fetchCamion();
+    }, [id, getCamionById]);
 
-    if (!caja) {
+    if (!camion) {
         return         <div className="fixed top-0 left-0 w-full h-full bg-white bg-opacity-70 flex justify-center items-center">
         <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
     </div>;
@@ -56,7 +56,7 @@ function PerfilCajaPage() {
     };
 
     const handleUpdate = () => {
-        navigate(`/editarCaja/${id}`);
+        navigate(`/editarCamion/${id}`);
     };
 
     const renderDocumentOrPlaceholder = (url) => {
@@ -90,7 +90,7 @@ function PerfilCajaPage() {
             <SidePage />
             <div className="flex-1 p-6 lg:ml-[300px]">
                 <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-4xl text-black">Datos de la caja</h1>
+                    <h1 className="text-4xl text-black">Datos del camion</h1>
                     <button 
                         onClick={handleUpdate}
                         className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-600"
@@ -100,24 +100,32 @@ function PerfilCajaPage() {
                 </div>
                 <div className="bg-white rounded-lg shadow-md p-6">
                     <div className="flex items-center mb-6">
-                        <h2 className="text-2xl font-semibold">{caja.marca}</h2>
+                        <h2 className="text-2xl font-semibold">{camion.marca} {camion.modelo}</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
-                            <strong>Placas:</strong>
-                            <p>{caja.placas}</p>
+                            <strong>Color:</strong>
+                            <p>{camion.color}</p>
                         </div>
                         <div>
-                            <strong>Año:</strong>
-                            <p>{caja.anio}</p>
+                            <strong>Placas México:</strong>
+                            <p>{camion.placasMx}</p>
+                        </div>
+                        <div>
+                            <strong>Placas USA:</strong>
+                            <p>{camion.placasUsa}</p>
                         </div>
                         <div>
                             <strong>Numero de ECO:</strong>
-                            <p>{caja.numEco}</p>
+                            <p>{camion.numEco}</p>
                         </div>
                         <div>
                             <strong>Numero de serie:</strong>
-                            <p>{caja.numSerie}</p>
+                            <p>{camion.numSerie}</p>
+                        </div>
+                        <div>
+                            <strong>Utimo mantenimiento:</strong>
+                            <p>{camion.mantenimiento}</p>
                         </div>
                     </div>
                 </div>
@@ -138,4 +146,4 @@ function PerfilCajaPage() {
     );
 }
 
-export default PerfilCajaPage;
+export default PerfilProfesorPage;

@@ -1,12 +1,28 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { loginRequest, verifyTokenRequest, logoutRequest, getUsuarioRequest, updateUsuarioRequest } from "../api/auth.js";
-import { registerConductor, getAllConductors, getConductorRequest, getConductorFilesRequest, updateConductorRequest } from "../api/auth.conductor.js";
-import { registerPermiso, getAllPermisos, getPermisoRequest, UpdateStatusRequest, updatePermisoRequest, getPermisoFileRequest } from "../api/auth.permiso.js";
-import { getAllCamiones, registerCamion, getCamionRequest, updateCamionRequest } from "../api/auth.profesor.js";
+import { loginRequest, verifyTokenRequest, logoutRequest } from "../api/auth.js";
+import { 
+    getAllProfesores, 
+    registerProfesor, 
+    getProfesorRequest, 
+    deleteProfesorRequest, 
+    updateProfesorRequest, 
+    loginProfesorRequest
+} from "../api/auth.profesor.js";
+import { 
+    registerAlumno, 
+    getAllAlumnos, 
+    getAlumnoRequest, 
+    deleteAlumnoRequest, 
+    updateAlumnoRequest,
+    loginAlumnoRequest 
+} from "../api/auth.alumno.js";
+import { 
+    createAsistenciaRequest,
+    getAsistenciasByMateriaRequest,
+    getAsistenciasByAlumnoRequest
+} from "../api/auth.asistencias.js";
 import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
-import { getAllCajas, registerCaja, getCajaRequest, updateCajaRequest } from "../api/auth.alumno.js";
-import { cookie } from "express-validator";
 
 export const AuthContext = createContext();
 
@@ -19,20 +35,21 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [permiso, setPermiso] = useState(null);
-    const [camion, setCamion] = useState(null);
-    const [user, setUser] = useState([]);
-    const [conductor, setConductor] = useState(null);
+    const [user, setUser] = useState(null);
+    const [profesor, setProfesor] = useState(null);
+    const [alumno, setAlumno] = useState(null);
     const [isAuth, setIsAuth] = useState(false);
     const [errors, setErrors] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+    const [userType, setUserType] = useState(null); // 'profesor' o 'alumno'
 
-    const login = async (user) => {
+    // Login para profesores
+    const loginProfesor = async (profesor) => {
         try {
-            const res = await loginRequest(user);
+            const res = await loginProfesorRequest(profesor);
             setIsAuth(true);
-            setUser(res.data);
+            setProfesor(res.data);
+            setUserType('profesor');
             setErrors([]);
             return true;
         } catch (error) {
@@ -41,289 +58,173 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setErrors([error.response.data.message]);
             }
+            return false;
         }
     };
 
+    // Logout general
     const logout = async () => {
         try {
             await logoutRequest();
             Cookies.remove("token");
             setIsAuth(false);
-            setUser(null);
+            setProfesor(null);
+            setAlumno(null);
+            setUserType(null);
             window.location.href = "/login";
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
     };
 
-    const registrarConductor = async (conductor) => {
-        const res = await registerConductor(conductor);
-        setConductor(res.data);
-        setIsAuth(true);
-    };
-
-    const getConductors = async () => {
-        const response = await getAllConductors();
-        return response.data;
-    };
-
-    const getUsuarioById = async (id) => {
+    // Funciones para profesores
+    const registrarProfesor = async (profesorData) => {
         try {
-            const res = await getUsuarioRequest(id);
+            const res = await registerProfesor(profesorData);
             return res.data;
         } catch (error) {
-            console.error(error);
-        }
-    };
-    const getConductorById = async (id) => {
-        try {
-            const res = await getConductorRequest(id);
-            return res.data;
-        } catch (error) {
-            console.error(error);
+            setErrors([error.response.data.message]);
+            throw error;
         }
     };
 
-    const getPermisoById = async (id) => {
+    const getProfesores = async () => {
         try {
-            const res = await getPermisoRequest(id);
-            return res.data;
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const getCamionById = async (id) => {
-        try {
-            const res = await getCamionRequest(id);
-            return res.data;
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const getCajaById = async (id) => {
-        try {
-            const res = await getCajaRequest(id);
-            return res.data;
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const getPermisos = async () => {
-        const response = await getAllPermisos();
-        return response.data;
-    };
-
-    const registrarCamion = async (camion) => {
-        const res = await registerCamion(camion);
-        setCamion(res.data);
-        setIsAuth(true);
-    };
-
-    const registrarPermiso = async (permiso) => {
-        const res = await registerPermiso(permiso);
-        setPermiso(res.data);
-        setIsAuth(true);
-    };
-
-    const getCamiones = async () => {
-        const response = await getAllCamiones();
-        return response.data;
-    };
-
-    const registrarCaja = async (caja) => {
-        const res = await registerCaja(caja);
-        setCamion(res.data);
-        setIsAuth(true);
-    };
-
-    const getCajas = async () => {
-        const response = await getAllCajas();
-        return response.data;
-    };
-
-    //actualiza el status
-    const updateStatus = async (idpermiso, status) =>{
-        try {
-            await UpdateStatusRequest(idpermiso, status);
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    const editarConductor = async (id, formData) => {
-        try {
-            let updatedData = {};
-    
-            // Recorrer formData y almacenar los valores en updatedData
-            for (const pair of formData.entries()) {
-                updatedData[pair[0]] = pair[1];
-            }
-            console.log("Esto llega: ", updatedData);
-            formData=updatedData;
-            const response = await updateConductorRequest(id, formData);
-            console.log("Esto envía", response.data);
+            const response = await getAllProfesores();
             return response.data;
         } catch (error) {
-            console.error("Error al actualizar conductor:", error);
-            throw error;
-        }
-    };
-
-const editarPermiso = async (id, formData) => {
-    try {
-    let updatedData = {};
-
-    // Recorrer formData y almacenar los valores en updatedData
-    for (const pair of formData.entries()) {
-        updatedData[pair[0]] = pair[1];
-    }
-    console.log("Esto llega: ", updatedData);
-
-        const response = await updatePermisoRequest(id, formData);
-        console.log("Esto envia", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Error al actualizar permiso:", error);
-        throw error;
-    }
-};
-
-const editarUsuario = async (id, formData) => {
-    try {
-    let updatedData = {};
-
-    // Recorrer formData y almacenar los valores en updatedData
-    for (const pair of formData.entries()) {
-        updatedData[pair[0]] = pair[1];
-    }
-    console.log("Esto llega: ", updatedData);
-
-        const response = await updateUsuarioRequest(id, formData);
-        console.log("Esto envia", response.data);
-        return response.data;
-    } catch (error) {
-        console.error("Error al actualizar usuario:", error);
-        throw error;
-    }
-};
-
-
-
-const editarCaja = async (id, cajaData) => {
-        try {
-            const updatedCaja = await updateCajaRequest(id, cajaData);
-            return updatedCaja;
-        } catch (error) {
-            console.error("Error al actualizar la caja:", error);
-            throw error;
-        }
-};
-
-const editarCamion = async (id, camionData) => {
-        try {
-            const updatedCamion = await updateCamionRequest(id, camionData);
-            return updatedCamion;
-        } catch (error) {
-            console.error("Error al actualizar el camion:", error);
-            throw error;
-        }
-};
-
-const getConductorFiles = async (idconductor) => {
-        try {
-            const response = await getConductorFilesRequest(idconductor);
-            return response.data;
-        } catch (error) {
-            console.error("Error al obtener archivos del conductor:", error);
+            console.error("Error al obtener profesores:", error);
             return [];
         }
-    
-};
-const getPermisoFile = async (idpermiso) => {
-    try {
-      const response = await getPermisoFileRequest(idpermiso);
-      return response.data;
-    } catch (error) {
-      console.error("Error al obtener archivo del permiso:", error);
-      return null;
-    }
-  };
+    };
 
-useEffect(() => {
-        if (errors.length > 0) {
-            const timer = setTimeout(() => {
-                setErrors([]);
-            }, 5000);
-            return () => clearTimeout(timer);
+    const getProfesorById = async (id) => {
+        try {
+            const res = await getProfesorRequest(id);
+            return res.data;
+        } catch (error) {
+            console.error(error);
+            return null;
         }
-}, [errors]);
+    };
 
+    const editarProfesor = async (id, formData) => {
+        try {
+            const response = await updateProfesorRequest(id, formData);
+            return response.data;
+        } catch (error) {
+            console.error("Error al actualizar profesor:", error);
+            throw error;
+        }
+    };
 
-    useEffect(() =>{
-        async function checkLogin () {
-            const cookies = Cookies.get()
-            console.log(cookies)
-            if(!cookies){
-                setIsAuth(false)
+    // Funciones para alumnos
+    const registrarAlumno = async (alumnoData) => {
+        try {
+            const res = await registerAlumno(alumnoData);
+            return res.data;
+        } catch (error) {
+            setErrors([error.response.data.message]);
+            throw error;
+        }
+    };
+
+    const getAlumnos = async () => {
+        try {
+            const response = await getAllAlumnos();
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener alumnos:", error);
+            return [];
+        }
+    };
+
+    // Funciones para asistencias
+    const registrarAsistencias = async (materiaId, asistencias) => {
+        try {
+            const response = await createAsistenciaRequest(materiaId, asistencias);
+            return response.data;
+        } catch (error) {
+            setErrors([error.response?.data?.message || 'Error al registrar asistencias']);
+            throw error;
+        }
+    };
+
+    const getAsistenciasByMateria = async (materiaId) => {
+        try {
+            const response = await getAsistenciasByMateriaRequest(materiaId);
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener asistencias:", error);
+            return [];
+        }
+    };
+
+    const getAsistenciasByAlumno = async (alumnoId) => {
+        try {
+            const response = await getAsistenciasByAlumnoRequest(alumnoId);
+            return response.data;
+        } catch (error) {
+            console.error("Error al obtener asistencias del alumno:", error);
+            return [];
+        }
+    };
+
+    // Verificación de token
+    useEffect(() => {
+        async function checkLogin() {
+            const cookies = Cookies.get();
+            if (!cookies.token) {
+                setIsAuth(false);
                 setLoading(false);
-                return setUser(null)
+                return;
             }
-                try {
-                    const res = await verifyTokenRequest(cookies.token)
-                    if(!res.data){
-                        setIsAuth(false);
-                        setLoading(false);
-                        return;
-                    }
-                    setIsAuth(true);
-                    setUser(res.data);
-                    setLoading(false);
-                } catch (error) {
-                    console.log(error);
+            try {
+                const res = await verifyTokenRequest(cookies.token);
+                if (!res.data) {
                     setIsAuth(false);
-                    setUser(null);
                     setLoading(false);
+                    return;
                 }
+                setIsAuth(true);
+                if (res.data.tipo === 'profesor') {
+                    setProfesor(res.data);
+                    setUserType('profesor');
+                } else if (res.data.tipo === 'alumno') {
+                    setAlumno(res.data);
+                    setUserType('alumno');
+                }
+                setLoading(false);
+            } catch (error) {
+                console.error(error);
+                setIsAuth(false);
+                setProfesor(null);
+                setAlumno(null);
+                setUserType(null);
+                setLoading(false);
+            }
         }
         checkLogin();
-    },[])
+    }, []);
 
     return (
         <AuthContext.Provider value={{
-            login,
+            loginProfesor,
             logout,
-            registrarConductor,
-            registrarPermiso,
-            registrarCamion,
-            registrarCaja,
-            getConductorById,
-            getConductorFiles,
-            getPermisoFile,
-            getPermisoById,
-            getUsuarioById,
-            getCamionById,
-            getCajaById,
-            getConductors,
-            getPermisos,
-            getCamiones,
-            getCajas,
-            editarConductor,
-            editarUsuario,
-            editarPermiso,
-            editarCamion,
-            editarCaja,
-            updateStatus,
-            setIsAuth,
+            registrarProfesor,
+            registrarAlumno,
+            getProfesores,
+            getAlumnos,
+            getProfesorById,
+            editarProfesor,
+            registrarAsistencias,
+            getAsistenciasByMateria,
+            getAsistenciasByAlumno,
             errors,
             isAuth,
-            user,
-            setUser,
-            conductor,
-            permiso,
-            camion,
+            profesor,
+            alumno,
+            userType,
             loading
         }}>
             {children}
@@ -334,3 +235,5 @@ useEffect(() => {
 AuthProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };
+
+export default AuthProvider;

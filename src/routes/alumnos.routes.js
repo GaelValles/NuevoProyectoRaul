@@ -8,7 +8,7 @@ const router = Router();
 
 router.get('/alumnos', authRequired, getAlumnos);
 router.get('/alumno/:id/search', authRequired, getAlumno);
-router.post("/alumno", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postAlumnos);
+router.post("/registrarAlumno", fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }),postAlumnos);
 router.delete('/alumno/:id/delete', authRequired, deleteAlumno);
 
 router.put("/alumno/:id/update", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), updateAlumno);

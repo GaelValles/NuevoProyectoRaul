@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { loginProfesorRequest } from '../api/auth.profesor';
 
-function LoginPage() {
+function LoginAlumnoPage() {
     const { loginProfesor, errors: loginErrors } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ function LoginPage() {
                     container: 'font-sans'
                 }
             });
-            navigate("/inicioProfesor");
+            navigate("/Inicio");
         } else {
             Swal.fire({
                 icon: 'error',
@@ -111,4 +111,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default LoginAlumnoPage;

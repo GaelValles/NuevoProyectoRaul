@@ -1,13 +1,22 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
-import { deleteMateria, getMateria, getMaterias, postMateria, updateMateria } from "../controllers/materia.controller.js";
+import { 
+    getMateria, 
+    getMaterias, 
+    createMateria, 
+    updateMateria, 
+    deleteMateria,
+    getMateriasByProfesor 
+} from "../controllers/materia.controller.js";
 
 const router = Router();
 
+router.get("/profesores/:id/materias", authRequired, getMateriasByProfesor);
+router.post("/profesores/:id/registrarMaterias", createMateria);
 router.get('/materias', authRequired, getMaterias );
 router.get('/materia/:id', authRequired, getMateria );
-router.post("/registrarMateria", authRequired, postMateria);
 router.delete('/materia/:id/delete', authRequired, deleteMateria);
 router.put('/materia/:id/update', authRequired, updateMateria);
+router.get("/materia/:id/search", authRequired, getMateria);
 
 export default router;

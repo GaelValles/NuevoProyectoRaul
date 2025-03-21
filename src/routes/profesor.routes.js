@@ -14,7 +14,7 @@ const router = Router()
 
 router.get("/profesores", authRequired, getProfesores);
 router.get("/profesor/:id", authRequired, GetProfesor);
-router.post("/registrarPermiso", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postProfesor);
+router.post("/registrarProfesor", fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), postProfesor);
 router.put("/profesor/:id/update", authRequired, fileUpload({ useTempFiles: true, tempFileDir: "./uploads" }), updateProfesor);
 router.put("/profesor/:id/status", authRequired, cambioStatus);
 router.delete("/profesor/:id/delete", authRequired, deleteProfesor);

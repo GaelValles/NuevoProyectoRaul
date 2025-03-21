@@ -10,7 +10,7 @@ function ProtectedRoute () {
             <div className="border-8 border-gray-300 border-t-blue-500 rounded-full w-20 h-20 animate-spin"></div>
         </div>
     );
-    if (!loading && !isAuth) return <Navigate to="/login" replace />;
+    if (!loading && !isAuth) return <Navigate to="/inicio" replace />;
 
     return <Outlet />;
 }
