@@ -1,16 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/auth.context';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { loginProfesorRequest } from '../api/auth.profesor';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function LoginPage() {
     const { loginProfesor, errors: loginErrors } = useAuth();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
+    const [recaptchaToken, setRecaptchaToken] = useState(null);
+
+    // Manejar el evento de reCAPTCHA
+    const onRecaptchaChange = (token) => {
+        setRecaptchaToken(token); // Guarda el token generado por reCAPTCHA
+    };
 
     const onSubmit = handleSubmit(async (profesor) => {
+        if (!recaptchaToken) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, verifica el reCAPTCHA antes de continuar.',
+            });
+            return;
+        }
+
         const success = await loginProfesor(profesor);
         if (success) {
             Swal.fire({
@@ -89,6 +105,12 @@ function LoginPage() {
                             <p className='text-red-500 text-sm mt-1'>Contraseña requerida</p>
                         }
                     </div>
+
+                    {/* reCAPTCHA */}
+                    <ReCAPTCHA
+                        sitekey="6LexYfsqAAAAAIKr5x5jyO_YFavteE_DaGU-4O95"
+                        onChange={onRecaptchaChange}
+                    />
 
                     <button
                         type="submit"
